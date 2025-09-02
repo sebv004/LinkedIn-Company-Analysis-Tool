@@ -30,6 +30,11 @@ A structured checklist to track progress across all phases of the project.
   - [ ] Validate -> Save -> Load -> Re-validate
   - [ ] Ensure all tests pass
 
+### Documentation
+- [ ] Implementation Doc: describe config schema, validation, and manager logic
+- [ ] Test Doc: outline test coverage for `CompanyConfig` + `ConfigManager`
+- [ ] Demo Doc: show how to run the validation script
+
 ---
 
 ## Phase 2: Mock Data Collection & Processing
@@ -58,6 +63,11 @@ A structured checklist to track progress across all phases of the project.
   - [ ] Print input/output
   - [ ] Ensure all tests pass
 
+### Documentation
+- [ ] Implementation Doc: describe `Post` model, collectors, and processors
+- [ ] Test Doc: outline test strategy for collectors & processors
+- [ ] Demo Doc: show how to run mock collection and cleaning
+
 ---
 
 ## Phase 3: NLP Analysis Modules
@@ -82,6 +92,11 @@ A structured checklist to track progress across all phases of the project.
   - [ ] Run mock posts through `analyze_sentiment`
   - [ ] Run mock posts through `extract_topics`
   - [ ] Print sentiments + frequency dictionary
+
+### Documentation
+- [ ] Implementation Doc: explain NLP pipeline & logic for sentiment + topics
+- [ ] Test Doc: detail test inputs/outputs for NLP modules
+- [ ] Demo Doc: guide to running sentiment & topic demo
 
 ---
 
@@ -117,12 +132,30 @@ A structured checklist to track progress across all phases of the project.
   - [ ] Save config
   - [ ] Prototype demo-ready
 
+### Documentation
+- [ ] Implementation Doc: describe Streamlit architecture & UI flows
+- [ ] Test Doc: outline UI validation, button functionality, export flow
+- [ ] Demo Doc: walkthrough for demoing the Streamlit app
+
 ---
 
 ## Phase 5: Integration with Real Data Source (Future)
 - [ ] Replace `MockCollector` with real LinkedIn data source
 - [ ] Implement API wrapper or scraper
 - [ ] Update pipeline tests with real data
+
+### Validation Demo
+- [ ] Script/UI to:
+  - [ ] Load a real company configuration
+  - [ ] Fetch live LinkedIn posts
+  - [ ] Run them through `DataProcessor` + `NLPProcessor`
+  - [ ] Compare mock vs real outputs
+  - [ ] Ensure consistent results
+
+### Documentation
+- [ ] Implementation Doc: detail real data integration & handling
+- [ ] Test Doc: describe live data test strategy & reliability checks
+- [ ] Demo Doc: instructions for running live data demo
 
 ---
 
@@ -131,5 +164,17 @@ A structured checklist to track progress across all phases of the project.
 - [ ] Add monitoring (logging, error tracking)
 - [ ] Add error handling (graceful fallbacks)
 - [ ] Set up deployment (Docker, CI/CD, hosting)
+
+### Validation Demo
+- [ ] Deploy a staging version
+  - [ ] Test authentication workflow
+  - [ ] Verify monitoring dashboards/logging
+  - [ ] Trigger error cases for resilience testing
+  - [ ] Confirm deployment pipeline runs end-to-end
+
+### Documentation
+- [ ] Implementation Doc: describe production setup, auth, monitoring
+- [ ] Test Doc: document test coverage for productionization features
+- [ ] Demo Doc: step-by-step guide for staging demo
 
 ---
