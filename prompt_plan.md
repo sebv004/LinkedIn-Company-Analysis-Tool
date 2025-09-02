@@ -1,1529 +1,1068 @@
-# LinkedIn Company Analysis Tool - Development Prompt Plan
+# LinkedIn Company Analysis Tool - Implementation Blueprint
 
 ## Project Overview
-This document provides a comprehensive, step-by-step development plan for building the LinkedIn Company Analysis Tool. The plan is designed for iterative implementation using code-generation LLMs, ensuring each step builds incrementally without complexity jumps.
 
-## High-Level Architecture Blueprint
+This document provides a detailed, step-by-step implementation plan for building the LinkedIn Company Analysis Tool - a web-based application that analyzes LinkedIn posts for user-specified companies, showcasing AI Ops and NLP capabilities.
 
-### System Components
-1. **Web Frontend** - React/Next.js application with company configuration wizard and dashboard
-2. **Backend API** - Python FastAPI service handling data processing and analysis
-3. **Data Pipeline** - Modular processing system for LinkedIn data collection and NLP analysis
-4. **Configuration Management** - JSON-based company profile storage and management
-5. **Export System** - PDF/CSV generation with company-specific branding
-6. **Monitoring** - Prometheus metrics and health checking
+## High-Level Architecture
 
-### Technology Stack
-- **Frontend**: React with TypeScript, Next.js, Tailwind CSS
-- **Backend**: Python 3.11+, FastAPI, Pydantic, SQLAlchemy
-- **Data Processing**: pandas, scikit-learn, spaCy, transformers
-- **Database**: PostgreSQL for configurations, Redis for caching
-- **Infrastructure**: Docker, docker-compose, NGINX
-- **Monitoring**: Prometheus, structured logging
+The system follows a **processing pipeline architecture** with these core phases:
 
-## Development Phases
+1. **Foundation & Configuration** - Basic web framework, company configuration system
+2. **Data Collection Infrastructure** - Mock data simulation and collection framework  
+3. **NLP Processing Pipeline** - Text analysis, sentiment, and topic detection
+4. **Web Interface & Dashboard** - User interface and company management
+5. **Export & Monitoring** - Report generation and system observability
+6. **Integration & Production** - Authentication, deployment, and optimization
 
-### Phase 1: Foundation (Steps 1-3)
-Basic project structure, configuration management, and simple web interface
+## Implementation Strategy
 
-### Phase 2: Core Pipeline (Steps 4-7)
-Data collection, text processing, and basic NLP analysis
+Each step includes:
+- **Code-based demo** in `demos/step_[number]/`
+- **Implementation documentation** in `docs/step_[number]/implementation_doc.md`
+- **Test documentation** in `docs/step_[number]/test_doc.md`
+- **Demo instructions** in `docs/step_[number]/demo_doc.md`
 
-### Phase 3: Advanced Features (Steps 8-11)
-Enhanced NLP, web dashboard, export functionality
-
-### Phase 4: Production (Steps 12-15)
-Authentication, monitoring, deployment, and optimization
-
-## Detailed Implementation Steps
+## Development Steps
 
 ---
 
-## Step 1: Project Foundation and Configuration Schema
+## Step 1: Project Foundation & Basic Web Framework
 
-**Context**: Establish the basic project structure with configuration management as the cornerstone of the application.
+### Objective
+Set up the basic project structure, web framework, and development environment with a simple "Hello World" API endpoint.
 
-**Objectives**:
-- Set up project structure with proper Python and Node.js environments
-- Implement JSON schema validation for company configurations
-- Create basic configuration CRUD operations
-- Establish development environment with Docker
+### Deliverables
+- Project structure with proper organization
+- Basic FastAPI application with health check endpoint
+- Development environment setup (requirements.txt, basic configuration)
+- Simple test suite setup with pytest
 
-**Prompt**:
+### Validation Demo
+- Working FastAPI server that responds to health check requests
+- Basic test that verifies the endpoint functionality
+
+### LLM Prompt
+
 ```
-Create a LinkedIn Company Analysis Tool project with the following structure:
+Create the foundational structure for a LinkedIn Company Analysis Tool using FastAPI. 
 
-1. Set up a monorepo structure with:
-   - `/backend` - Python FastAPI application
-   - `/frontend` - React TypeScript application  
-   - `/docker` - Docker configuration files
-   - `/docs` - Documentation
-   - Root level docker-compose.yml
+Requirements:
+1. Set up a proper Python project structure with these directories:
+   - src/linkedin_analyzer/ (main application code)
+   - tests/ (test files)
+   - demos/step_1/ (demo code for this step)
+   - docs/step_1/ (documentation for this step)
 
-2. In the backend, create:
-   - `pyproject.toml` with dependencies: fastapi, pydantic, sqlalchemy, alembic, pytest
-   - `src/` directory with proper Python package structure
-   - `src/models/company_config.py` - Pydantic models matching the JSON schema from spec.md
-   - `src/services/config_service.py` - CRUD operations for company configurations
-   - Basic FastAPI app in `src/main.py` with health check endpoint
+2. Create a basic FastAPI application in src/linkedin_analyzer/main.py with:
+   - Health check endpoint (GET /health)
+   - Basic CORS middleware setup
+   - Proper error handling structure
 
-3. Create a comprehensive Pydantic model for company configuration that includes:
-   - Company details (name, linkedin_url, aliases, email_domain, hashtags, keywords)
-   - Analysis settings (date_range, include_employees, include_mentions, sentiment_threshold, languages)
-   - Validation rules for each field
-   - Example configurations for different company sizes
+3. Set up development files:
+   - requirements.txt with FastAPI, uvicorn, pytest, httpx
+   - src/linkedin_analyzer/__init__.py
+   - Basic configuration structure
 
-4. Implement configuration service with methods:
-   - save_config() - Save company configuration to JSON file
-   - load_config() - Load configuration by company name
-   - list_configs() - List all saved configurations
-   - validate_config() - Validate configuration against schema
+4. Create tests/test_main.py with:
+   - Test for health check endpoint
+   - Basic test client setup
 
-5. Add comprehensive error handling and logging
-6. Include unit tests for configuration validation and CRUD operations
-7. Create docker-compose.yml for development with hot reloading
+5. In demos/step_1/:
+   - Create demo.py that starts the server and makes a test request
+   - Show the basic functionality working
 
-Ensure all code follows Python best practices with proper type hints, docstrings, and error handling.
+6. Documentation (all in docs/step_1/):
+   - implementation_doc.md: Explain the project structure, FastAPI choice, and basic setup
+   - test_doc.md: How to run tests, what they validate, expected outcomes
+   - demo_doc.md: Step-by-step instructions to run the demo
+
+Follow Python best practices, use type hints, and ensure all code is testable. The demo should clearly show a working web server responding to requests.
 ```
 
 ---
 
-## Step 2: Basic Web Interface and Company Setup Wizard
+## Step 2: Company Configuration Data Models
 
-**Context**: Create a minimal web interface that can collect and validate company configurations.
+### Objective
+Create Pydantic models for company configuration schema with validation, and basic CRUD operations for storing/retrieving company profiles.
 
-**Objectives**:
-- Set up React frontend with TypeScript
-- Create company configuration form with validation
-- Implement basic API communication between frontend and backend
-- Add form validation that matches backend Pydantic models
+### Deliverables
+- Pydantic models matching the specification schema
+- In-memory storage for company configurations
+- CRUD API endpoints for company management
+- Validation logic for company data
 
-**Prompt**:
+### Validation Demo
+- API endpoints that can create, read, update, and delete company configurations
+- Validation that rejects invalid company data
+- Test suite covering all CRUD operations
+
+### LLM Prompt
+
 ```
-Extend the project by creating a React frontend that interfaces with the FastAPI backend:
+Building on Step 1, create the company configuration system for the LinkedIn Company Analysis Tool.
 
-1. Set up the frontend in `/frontend` with:
-   - Next.js 14 with TypeScript and Tailwind CSS
-   - Package.json with dependencies: react, next, typescript, tailwindcss, axios, react-hook-form, zod
-   - Proper TypeScript configuration and linting setup
+Requirements:
+1. In src/linkedin_analyzer/models/:
+   - Create company.py with Pydantic models matching the specification:
+     - CompanyProfile (name, linkedin_url, aliases, email_domain, hashtags, keywords, industry, size)
+     - AnalysisSettings (date_range, include_employees, include_mentions, sentiment_threshold, languages)
+     - CompanyConfiguration (combines CompanyProfile and AnalysisSettings)
+   - Add proper validation rules (email domain format, URL validation, enum choices)
 
-2. Create TypeScript types that match the backend Pydantic models:
-   - `types/company.ts` - Interface definitions for CompanyConfig
-   - `types/api.ts` - API response and request types
+2. In src/linkedin_analyzer/storage/:
+   - Create memory_storage.py with an in-memory company configuration store
+   - Implement CompanyConfigStorage class with CRUD methods
+   - Include proper error handling for not found, duplicates, etc.
 
-3. Implement a Company Setup Wizard with these components:
-   - `components/CompanyWizard.tsx` - Multi-step form wizard
-   - `components/CompanyForm.tsx` - Main configuration form
-   - `components/FormField.tsx` - Reusable form input component
-   - `pages/index.tsx` - Landing page with "Analyze New Company" button
-   - `pages/configure.tsx` - Company configuration page
+3. In src/linkedin_analyzer/api/:
+   - Create company_config.py with FastAPI router
+   - Implement endpoints: POST /companies, GET /companies, GET /companies/{name}, PUT /companies/{name}, DELETE /companies/{name}
+   - Add proper HTTP status codes and error responses
 
-4. Add form validation using react-hook-form and zod that mirrors backend validation:
-   - Required field validation
-   - URL format validation for LinkedIn URLs
-   - Email domain format validation
-   - Language code validation
+4. Update src/linkedin_analyzer/main.py:
+   - Include the company configuration router
+   - Add global exception handlers
 
-5. Create API client service:
-   - `services/api.ts` - Axios-based API client
-   - Error handling for API responses
-   - Type-safe request/response handling
+5. Expand tests/test_company_config.py:
+   - Test all CRUD operations
+   - Test validation rules (invalid emails, required fields, etc.)
+   - Test error cases (not found, duplicates)
 
-6. Connect the frontend to backend:
-   - POST /api/companies to save configurations
-   - GET /api/companies to list saved configurations
-   - GET /api/companies/{name} to load specific configuration
+6. In demos/step_2/:
+   - Create demo.py that demonstrates creating, retrieving, and managing company configurations
+   - Show validation working (both success and failure cases)
 
-7. Add basic error handling and user feedback
-8. Style with Tailwind CSS for a clean, professional look
-9. Ensure responsive design for mobile and desktop
+7. Documentation (docs/step_2/):
+   - implementation_doc.md: Explain the data models, validation strategy, and storage approach
+   - test_doc.md: Comprehensive test plan covering all validation and CRUD scenarios
+   - demo_doc.md: Instructions to run the demo showing company configuration management
 
-Test the complete flow: create company configuration → save → reload → display saved configurations.
-```
-
----
-
-## Step 3: Configuration Management and Storage
-
-**Context**: Implement persistent storage and enhance configuration management with database integration.
-
-**Objectives**:
-- Add PostgreSQL database integration
-- Create database models and migrations
-- Implement configuration persistence and retrieval
-- Add configuration templates and validation
-
-**Prompt**:
-```
-Enhance the configuration management system with persistent database storage:
-
-1. Database setup in backend:
-   - Add PostgreSQL dependency to pyproject.toml
-   - Create `src/database/` directory with SQLAlchemy setup
-   - `src/database/models.py` - SQLAlchemy ORM models for company configurations
-   - `src/database/connection.py` - Database connection and session management
-   - `alembic/` - Database migration setup and initial migration
-
-2. Update the configuration service:
-   - Modify `src/services/config_service.py` to use database instead of JSON files
-   - Add async database operations for CRUD
-   - Implement search and filtering capabilities
-   - Add configuration validation before database save
-
-3. Create configuration templates:
-   - `src/templates/company_templates.py` - Predefined configurations for different company types
-   - Templates for: startup, small business, medium enterprise, large corporation
-   - Include realistic example data for each template type
-
-4. Enhance the API endpoints in `src/main.py`:
-   - GET /api/companies - List all configurations with pagination
-   - POST /api/companies - Create new configuration
-   - GET /api/companies/{id} - Get specific configuration
-   - PUT /api/companies/{id} - Update configuration
-   - DELETE /api/companies/{id} - Delete configuration
-   - GET /api/templates - Get available configuration templates
-
-5. Update frontend to work with the new API:
-   - Modify `services/api.ts` to handle new endpoints
-   - Add configuration management page: `pages/manage.tsx`
-   - Create `components/ConfigurationList.tsx` - Display and manage saved configurations
-   - Add template selection to the wizard
-   - Implement edit and delete functionality
-
-6. Add comprehensive error handling:
-   - Database connection errors
-   - Validation errors with detailed messages
-   - Duplicate company name handling
-   - Foreign key constraint handling
-
-7. Update docker-compose.yml to include PostgreSQL service
-8. Add database initialization and seeding scripts
-9. Create comprehensive tests for database operations
-
-Ensure all database operations are properly tested and migrations work correctly.
+Ensure all models have proper docstrings, validation messages are user-friendly, and the API follows RESTful conventions.
 ```
 
 ---
 
-## Step 4: LinkedIn Data Collection Framework
+## Step 3: Mock Data Collection System
 
-**Context**: Build the foundation for LinkedIn data collection with proper rate limiting and error handling.
+### Objective
+Create a data collection framework with mock LinkedIn data generation to simulate the data collection pipeline without external dependencies.
 
-**Objectives**:
-- Create data collection architecture
-- Implement LinkedIn scraping/API integration
-- Add rate limiting and retry mechanisms
-- Build data validation and preprocessing pipeline
+### Deliverables
+- Data models for LinkedIn posts and user profiles
+- Mock data generator that creates realistic sample data
+- Data collection service interface
+- Basic filtering and search functionality
 
-**Prompt**:
+### Validation Demo
+- System that generates mock LinkedIn posts for different companies
+- Configurable data generation based on company parameters
+- Demo showing data collection working with different company configurations
+
+### LLM Prompt
+
 ```
-Create the LinkedIn data collection system with proper rate limiting and error handling:
+Building on Steps 1-2, create a mock data collection system that simulates LinkedIn data gathering.
 
-1. Data collection architecture in backend:
-   - Create `src/collectors/` directory for data collection modules
-   - `src/collectors/base.py` - Abstract base class for all collectors
-   - `src/collectors/linkedin_collector.py` - LinkedIn-specific data collection
-   - `src/collectors/rate_limiter.py` - Rate limiting and request throttling
-   - `src/models/post_data.py` - Pydantic models for collected post data
+Requirements:
+1. In src/linkedin_analyzer/models/:
+   - Create linkedin_data.py with models for:
+     - LinkedInPost (id, author, content, timestamp, engagement_metrics, post_type, company_mention)
+     - LinkedInProfile (id, name, company, title, email_domain)
+     - PostCollection (posts, metadata like total_count, date_range, company_filter)
 
-2. Implement LinkedIn data collection:
-   - Company page post collection using requests and BeautifulSoup
-   - Employee post identification (mock implementation for development)
-   - Mention detection using company name variations and hashtags
-   - Support for multiple languages (English, French, Dutch)
-   - Proper User-Agent rotation and session management
+2. In src/linkedin_analyzer/data_collection/:
+   - Create mock_data_generator.py with:
+     - MockDataGenerator class that creates realistic LinkedIn posts
+     - Support for company-specific content (mentions, hashtags, employee posts)
+     - Configurable data volume and date ranges
+     - Multi-language content generation (English, French, Dutch)
+   
+   - Create data_collector.py with:
+     - DataCollector interface (abstract base class)
+     - MockDataCollector implementation
+     - Methods for collecting company posts, employee posts, and mentions
 
-3. Add rate limiting and retry mechanisms:
-   - Exponential backoff for failed requests
-   - Configurable rate limits per collection type
-   - Request queuing to prevent API abuse
-   - Circuit breaker pattern for persistent failures
+3. In src/linkedin_analyzer/services/:
+   - Create collection_service.py with:
+     - CollectionService that orchestrates data collection
+     - Methods to collect data based on CompanyConfiguration
+     - Basic filtering and aggregation functionality
 
-4. Create data validation pipeline:
-   - `src/processors/validator.py` - Data validation and sanitization
-   - Content language detection
-   - Duplicate post detection and removal
-   - Data quality scoring and filtering
+4. In src/linkedin_analyzer/api/:
+   - Create data_collection.py with endpoints:
+     - POST /companies/{name}/collect-data (triggers data collection)
+     - GET /companies/{name}/posts (retrieves collected posts)
+     - Include pagination support
 
-5. Add collection orchestration:
-   - `src/services/collection_service.py` - Orchestrate data collection process
-   - Async collection with proper error handling
-   - Progress tracking and status reporting
-   - Collection result summarization
+5. Update tests/:
+   - test_mock_data_generator.py: Test data generation quality and variety
+   - test_data_collection.py: Test collection service functionality
+   - test_collection_api.py: Test API endpoints
 
-6. Enhance API with collection endpoints:
-   - POST /api/analyze/{company_id}/collect - Start data collection
-   - GET /api/analyze/{company_id}/status - Check collection status
-   - GET /api/analyze/{company_id}/results - Get collection results
+6. In demos/step_3/:
+   - Create demo.py showing:
+     - Data collection for different company types
+     - Generated data matching company configuration
+     - Different languages and content types
 
-7. Update frontend for data collection:
-   - Create `components/CollectionStatus.tsx` - Real-time collection progress
-   - Add `pages/analysis/[id].tsx` - Analysis page for specific company
-   - Implement WebSocket or polling for real-time status updates
+7. Documentation (docs/step_3/):
+   - implementation_doc.md: Explain the data collection architecture, mock data strategy
+   - test_doc.md: Test plan for data generation quality and collection functionality
+   - demo_doc.md: Instructions showing data collection working for various scenarios
 
-8. Add comprehensive logging and monitoring:
-   - Collection metrics and performance tracking
-   - Error categorization and reporting
-   - Data quality metrics
-
-9. Mock data generation for development:
-   - `src/utils/mock_data.py` - Generate realistic LinkedIn post data
-   - Support for different company sizes and industries
-   - Configurable data volume and variety
-
-10. Create thorough tests including integration tests with mock HTTP responses
-
-Ensure the collection system is robust, respects rate limits, and handles errors gracefully.
-```
-
----
-
-## Step 5: Text Processing and NLP Foundation
-
-**Context**: Implement text preprocessing, cleaning, and basic NLP analysis capabilities.
-
-**Objectives**:
-- Build text preprocessing pipeline
-- Implement sentiment analysis
-- Add named entity recognition
-- Create topic detection system
-
-**Prompt**:
-```
-Implement the NLP processing pipeline for analyzing collected LinkedIn posts:
-
-1. Text preprocessing system:
-   - Create `src/processors/` directory for text processing modules
-   - `src/processors/text_cleaner.py` - Text cleaning and normalization
-   - `src/processors/language_detector.py` - Language detection and filtering
-   - `src/processors/preprocessor.py` - Unified preprocessing pipeline
-
-2. Implement text cleaning capabilities:
-   - Remove LinkedIn-specific noise (mentions, hashtags preprocessing)
-   - HTML entity decoding and special character handling
-   - Company name standardization using aliases
-   - Language-specific text normalization (English, French, Dutch)
-   - Emoji handling and URL extraction
-
-3. Add sentiment analysis:
-   - `src/analyzers/sentiment_analyzer.py` - Multi-language sentiment analysis
-   - Use transformers library with pre-trained models
-   - Support for multilingual sentiment models (English, French, Dutch)
-   - Company-focused sentiment scoring
-   - Confidence scoring and uncertainty handling
-
-4. Implement Named Entity Recognition:
-   - `src/analyzers/ner_analyzer.py` - Company-aware NER
-   - Extract organizations, people, locations, dates
-   - Custom entity recognition for company-specific terms
-   - Entity linking preparation for external sources
-
-5. Create topic detection system:
-   - `src/analyzers/topic_analyzer.py` - Industry-agnostic topic modeling
-   - Use scikit-learn for LDA topic modeling
-   - Dynamic topic number selection based on data volume
-   - Topic coherence scoring and validation
-
-6. Build unified analysis orchestrator:
-   - `src/services/analysis_service.py` - Coordinate all analysis steps
-   - Async processing with proper error handling
-   - Progress tracking and intermediate result storage
-   - Performance optimization for large datasets
-
-7. Create analysis data models:
-   - `src/models/analysis_results.py` - Pydantic models for analysis outputs
-   - Sentiment scores, topics, entities, and metadata
-   - Aggregated company-level metrics
-   - Time-series data structures for trend analysis
-
-8. Add analysis API endpoints:
-   - POST /api/analyze/{company_id}/process - Start NLP analysis
-   - GET /api/analyze/{company_id}/sentiment - Get sentiment analysis results
-   - GET /api/analyze/{company_id}/topics - Get topic analysis results
-   - GET /api/analyze/{company_id}/entities - Get entity extraction results
-
-9. Update frontend for analysis results:
-   - Create `components/AnalysisResults.tsx` - Display analysis outcomes
-   - Add `components/SentimentChart.tsx` - Sentiment visualization
-   - Implement `components/TopicCloud.tsx` - Topic visualization
-
-10. Add comprehensive testing:
-    - Unit tests for each analyzer with sample data
-    - Integration tests for the complete analysis pipeline
-    - Performance tests with varying data sizes
-    - Multi-language processing validation
-
-11. Include proper error handling:
-    - Model loading failures
-    - Insufficient data handling
-    - Language detection errors
-    - Memory and performance optimization
-
-Ensure the NLP pipeline is robust, performant, and handles edge cases gracefully.
+Include realistic sample content, ensure data variety matches real LinkedIn patterns, and make the mock data configurable for testing different scenarios.
 ```
 
 ---
 
-## Step 6: Advanced Analytics and Trend Forecasting
+## Step 4: Basic NLP Processing Pipeline
 
-**Context**: Implement advanced analytics including trend detection, forecasting, and strategic insights generation.
+### Objective
+Implement core NLP functionality for sentiment analysis, basic topic detection, and named entity recognition using lightweight libraries.
 
-**Objectives**:
-- Add time-series analysis for trend detection
-- Implement basic forecasting capabilities
-- Create strategic insights categorization
-- Build aggregation and summarization features
+### Deliverables
+- NLP processing pipeline with modular components
+- Sentiment analysis using TextBlob or similar
+- Basic topic detection and keyword extraction
+- Named entity recognition
+- Processing results storage and retrieval
 
-**Prompt**:
+### Validation Demo
+- System that processes collected posts and generates analysis results
+- Clear examples of sentiment scores, topics, and entities extracted
+- Performance metrics and processing statistics
+
+### LLM Prompt
+
 ```
-Extend the analysis system with advanced analytics and trend forecasting capabilities:
+Building on Steps 1-3, create the core NLP processing pipeline for analyzing LinkedIn posts.
 
-1. Trend analysis system:
-   - Create `src/analyzers/trend_analyzer.py` - Time-series trend detection
-   - Implement sliding window analysis for sentiment and topic trends
-   - Weekly, monthly trend calculation and smoothing
-   - Trend strength and direction scoring
-   - Anomaly detection for unusual patterns
+Requirements:
+1. In src/linkedin_analyzer/models/:
+   - Create analysis_results.py with:
+     - SentimentResult (score, label, confidence)
+     - TopicResult (topic_name, relevance_score, keywords)
+     - EntityResult (entity_text, entity_type, confidence)
+     - PostAnalysis (post_id, sentiment, topics, entities, processing_timestamp)
+     - CompanyAnalysisSummary (company_name, post_count, avg_sentiment, top_topics, key_entities, date_range)
 
-2. Forecasting capabilities:
-   - `src/analyzers/forecast_analyzer.py` - Basic trend forecasting
-   - Use scikit-learn for linear trend projection
-   - Implement ARIMA models for time-series forecasting
-   - Confidence intervals for forecast predictions
-   - Short-term (1-4 weeks) strategic direction prediction
+2. In src/linkedin_analyzer/nlp/:
+   - Create sentiment_analyzer.py with:
+     - SentimentAnalyzer class using TextBlob or VADER
+     - Methods for analyzing individual posts and batch processing
+     - Confidence scoring and result normalization
+   
+   - Create topic_extractor.py with:
+     - TopicExtractor using TF-IDF and basic clustering
+     - Keyword extraction functionality
+     - Topic labeling and relevance scoring
+   
+   - Create entity_recognizer.py with:
+     - EntityRecognizer using spaCy or NLTK
+     - Support for PERSON, ORG, LOCATION, MISC entities
+     - Company-specific entity enhancement
 
-3. Strategic insights categorization:
-   - `src/analyzers/insights_analyzer.py` - Strategic pattern recognition
-   - Categorize posts by business activities: hiring, tech, events, partnerships
-   - Identify competitive intelligence and market positioning
-   - Detect operational insights and customer sentiment patterns
-   - Industry-specific insight classification
+3. In src/linkedin_analyzer/nlp/:
+   - Create processing_pipeline.py with:
+     - NLPPipeline class that orchestrates all NLP components
+     - Batch processing capabilities
+     - Error handling for malformed text
+     - Processing statistics tracking
 
-4. Data aggregation and summarization:
-   - `src/services/aggregation_service.py` - Multi-dimensional data aggregation
-   - Company-level metric calculation and summarization
-   - Time-based aggregation (daily, weekly, monthly views)
-   - Comparative analysis preparation (vs. historical data)
-   - Key performance indicator (KPI) generation
+4. In src/linkedin_analyzer/services/:
+   - Create analysis_service.py with:
+     - AnalysisService that processes posts and stores results
+     - Company-focused analysis aggregation
+     - Historical analysis comparison
 
-5. Enhanced analysis models:
-   - Update `src/models/analysis_results.py` with trend and forecast data
-   - Add time-series data structures
-   - Include confidence scores and metadata
-   - Strategic insights categorization schemas
+5. Update requirements.txt:
+   - Add textblob, scikit-learn, spacy (or nltk), pandas
 
-6. Weekly trends summary generation:
-   - `src/services/summary_service.py` - Automated report generation
-   - Weekly trend narrative generation
-   - Key highlights and insights extraction
-   - Change detection and significance scoring
+6. In src/linkedin_analyzer/api/:
+   - Create analysis.py with endpoints:
+     - POST /companies/{name}/analyze (trigger analysis)
+     - GET /companies/{name}/analysis (get analysis results)
+     - GET /companies/{name}/analysis/summary (get aggregated insights)
 
-7. Expand API with advanced analytics:
-   - GET /api/analyze/{company_id}/trends - Get trend analysis
-   - GET /api/analyze/{company_id}/forecast - Get forecasting results
-   - GET /api/analyze/{company_id}/insights - Get strategic insights
-   - GET /api/analyze/{company_id}/summary - Get weekly summary report
+7. Expand tests/:
+   - test_sentiment_analyzer.py: Test sentiment analysis accuracy
+   - test_topic_extractor.py: Test topic detection quality
+   - test_entity_recognizer.py: Test entity recognition
+   - test_nlp_pipeline.py: Integration tests for full pipeline
 
-8. Update frontend with advanced visualizations:
-   - Create `components/TrendChart.tsx` - Interactive trend visualizations
-   - Add `components/ForecastChart.tsx` - Forecast display with confidence bands
-   - Implement `components/InsightsPanel.tsx` - Strategic insights dashboard
-   - Create `components/WeeklySummary.tsx` - Weekly trends overview
+8. In demos/step_4/:
+   - Create demo.py showing:
+     - End-to-end processing of mock LinkedIn posts
+     - Clear examples of extracted sentiment, topics, and entities
+     - Analysis summary for different company types
 
-9. Add comparative analysis features:
-   - Historical comparison capabilities
-   - Benchmark calculation against previous periods
-   - Performance metrics and growth indicators
-   - Trend deviation alerts and notifications
+9. Documentation (docs/step_4/):
+   - implementation_doc.md: NLP architecture, algorithm choices, performance considerations
+   - test_doc.md: Test strategy for NLP accuracy and edge cases
+   - demo_doc.md: Demo showing NLP pipeline processing various content types
 
-10. Implement caching and performance optimization:
-    - Redis integration for analysis result caching
-    - Incremental analysis for new data
-    - Background processing for computationally intensive operations
-    - Result pre-computation for frequently accessed data
-
-11. Add comprehensive testing:
-    - Time-series analysis validation with synthetic data
-    - Forecasting accuracy testing
-    - Strategic insights categorization accuracy
-    - Performance testing with large datasets
-
-Ensure the advanced analytics provide actionable insights and handle various data scenarios effectively.
-```
-
----
-
-## Step 7: Data Enrichment and External Integration
-
-**Context**: Implement data enrichment capabilities by linking entities to external sources and adding company-specific categorization.
-
-**Objectives**:
-- Integrate external data sources (Wikipedia, DBpedia)
-- Implement entity linking and enrichment
-- Add company-specific categorization based on industry
-- Create comprehensive data enhancement pipeline
-
-**Prompt**:
-```
-Implement data enrichment and external integration to enhance analysis quality:
-
-1. External data integration framework:
-   - Create `src/enrichment/` directory for enhancement modules
-   - `src/enrichment/base_enricher.py` - Abstract base class for enrichment services
-   - `src/enrichment/wikipedia_enricher.py` - Wikipedia entity linking
-   - `src/enrichment/dbpedia_enricher.py` - DBpedia knowledge base integration
-   - `src/enrichment/entity_linker.py` - Unified entity linking service
-
-2. Wikipedia integration:
-   - Entity search and disambiguation using Wikipedia API
-   - Extract entity descriptions, categories, and related information
-   - Confidence scoring for entity matches
-   - Caching to avoid redundant API calls
-   - Multi-language support (English, French, Dutch)
-
-3. DBpedia knowledge base integration:
-   - SPARQL query interface for structured data extraction
-   - Industry classification and company categorization
-   - Relationship extraction between entities
-   - Geographic and temporal information enrichment
-
-4. Company-specific categorization system:
-   - `src/enrichment/company_categorizer.py` - Industry-aware categorization
-   - Dynamic categorization based on business model and industry
-   - Custom label generation: hiring, tech, events, partnerships
-   - Context-aware categorization using company configuration data
-
-5. Entity linking and disambiguation:
-   - Named entity linking to external knowledge bases
-   - Disambiguation using context and company information
-   - Confidence scoring for entity links
-   - Fallback mechanisms for unresolved entities
-
-6. Enrichment orchestration service:
-   - `src/services/enrichment_service.py` - Coordinate all enrichment processes
-   - Async processing with proper error handling
-   - Priority-based enrichment (high-value entities first)
-   - Incremental enrichment for new data
-
-7. Enhanced data models:
-   - Update `src/models/analysis_results.py` with enriched entity data
-   - Add external reference links and confidence scores
-   - Include category classifications and relationship data
-   - Structured metadata for enriched information
-
-8. Caching and performance optimization:
-   - Redis caching for external API responses
-   - Entity resolution result caching
-   - Batch processing for multiple entities
-   - Rate limiting for external API calls
-
-9. API endpoints for enriched data:
-   - GET /api/analyze/{company_id}/entities/enriched - Get enriched entity data
-   - GET /api/analyze/{company_id}/categories - Get categorization results
-   - GET /api/analyze/{company_id}/knowledge - Get knowledge base information
-
-10. Frontend components for enriched data:
-    - Create `components/EntityCard.tsx` - Display enriched entity information
-    - Add `components/CategoryTags.tsx` - Show categorization results
-    - Implement `components/KnowledgePanel.tsx` - External knowledge display
-
-11. Industry-specific enhancement:
-    - Technology sector specific categorization
-    - Financial services specific insights
-    - Healthcare industry specific patterns
-    - Manufacturing and retail categorization
-
-12. Quality assurance and validation:
-    - Enrichment quality scoring
-    - Manual verification workflows for high-value enrichments
-    - Confidence thresholds for automatic acceptance
-    - Error tracking and resolution
-
-13. Comprehensive testing:
-    - Mock external API responses for testing
-    - Entity linking accuracy validation
-    - Categorization precision and recall testing
-    - Performance testing with large entity datasets
-
-Ensure the enrichment system adds significant value while maintaining high data quality and system performance.
+Focus on accuracy and performance, include proper error handling for various text inputs, and ensure results are interpretable and actionable.
 ```
 
 ---
 
-## Step 8: Dashboard and Visualization System
+## Step 5: Basic Web Interface
 
-**Context**: Create a comprehensive dashboard with interactive visualizations for company analysis results.
+### Objective
+Create a simple web interface for company configuration and displaying analysis results using HTML templates and basic styling.
 
-**Objectives**:
-- Build interactive dashboard with multiple visualization types
-- Implement real-time data updates
-- Add filtering and drill-down capabilities
-- Create company-specific branding
+### Deliverables
+- HTML templates for company management and results display
+- Basic CSS styling and responsive design
+- Static file serving
+- Form handling for company configuration
 
-**Prompt**:
+### Validation Demo
+- Functional web interface that allows users to configure companies
+- Results display showing analysis outcomes in a user-friendly format
+- Responsive design working on different screen sizes
+
+### LLM Prompt
+
 ```
-Develop a comprehensive dashboard system with rich visualizations for analysis results:
+Building on Steps 1-4, create a basic web interface for the LinkedIn Company Analysis Tool.
 
-1. Dashboard architecture in frontend:
-   - Create `components/dashboard/` directory for dashboard components
-   - `components/dashboard/Dashboard.tsx` - Main dashboard layout
-   - `components/dashboard/MetricsGrid.tsx` - Key metrics overview
-   - `components/dashboard/VisualizationPanel.tsx` - Chart container component
+Requirements:
+1. In src/linkedin_analyzer/templates/:
+   - Create base.html with:
+     - Basic HTML5 structure
+     - Bootstrap CSS for styling
+     - Navigation header
+     - Footer with app info
+   
+   - Create index.html:
+     - Landing page with "Analyze New Company" and "Load Saved Company" options
+     - Company list display
+     - Clean, professional design
+   
+   - Create company_form.html:
+     - Company configuration form matching the data models
+     - Form validation and error display
+     - User-friendly field labels and help text
+   
+   - Create analysis_results.html:
+     - Dashboard showing analysis results
+     - Sentiment overview with visual indicators
+     - Top topics and entities display
+     - Post samples with analysis highlights
 
-2. Implement core visualization components:
-   - `components/charts/SentimentTrendChart.tsx` - Time-series sentiment visualization
-   - `components/charts/TopicDistributionChart.tsx` - Topic analysis pie/bar charts
-   - `components/charts/EngagementMetrics.tsx` - Engagement statistics
-   - `components/charts/EntityNetworkGraph.tsx` - Entity relationship visualization
-   - `components/charts/GeographicHeatmap.tsx` - Geographic distribution of mentions
+2. In src/linkedin_analyzer/static/:
+   - Create css/styles.css with:
+     - Custom styling for the application
+     - Responsive design rules
+     - Professional color scheme
+     - Component-specific styles
+   
+   - Create js/app.js with:
+     - Basic form validation
+     - Interactive elements (collapsible sections, etc.)
+     - AJAX calls for dynamic content loading
 
-3. Add interactive chart library integration:
-   - Install and configure Chart.js or D3.js with TypeScript
-   - Create reusable chart wrapper components
-   - Implement responsive design for all visualizations
-   - Add hover tooltips and interactive legends
+3. In src/linkedin_analyzer/web/:
+   - Create routes.py with:
+     - FastAPI router for web routes
+     - Template rendering using Jinja2
+     - Form handling and validation
+     - Route handlers for: /, /companies/new, /companies/{name}, /companies/{name}/results
 
-4. Build filtering and drill-down system:
-   - `components/filters/DateRangeFilter.tsx` - Time period selection
-   - `components/filters/LanguageFilter.tsx` - Multi-language filtering
-   - `components/filters/SentimentFilter.tsx` - Sentiment-based filtering
-   - `components/filters/TopicFilter.tsx` - Topic-based filtering
-   - `components/filters/SourceFilter.tsx` - Data source filtering
+4. Update src/linkedin_analyzer/main.py:
+   - Add Jinja2 template configuration
+   - Add static file mounting
+   - Include web routes router
+   - Add form handling middleware
 
-5. Implement real-time updates:
-   - WebSocket integration for live data updates
-   - `hooks/useRealtimeData.tsx` - Custom hook for real-time data
-   - Auto-refresh capabilities with user controls
-   - Loading states and progress indicators
+5. Update requirements.txt:
+   - Add jinja2, python-multipart for form handling
 
-6. Create company-specific branding:
-   - `utils/companyBranding.tsx` - Dynamic branding utilities
-   - Company logo integration and color scheme adaptation
-   - Customizable dashboard themes based on company profile
-   - White-label styling capabilities
+6. In tests/:
+   - test_web_routes.py: Test web route responses
+   - test_templates.py: Test template rendering
+   - test_forms.py: Test form submission and validation
 
-7. Add metrics summary components:
-   - `components/metrics/KPICard.tsx` - Key performance indicator cards
-   - `components/metrics/TrendIndicator.tsx` - Trend direction indicators
-   - `components/metrics/ComparisonMetrics.tsx` - Period-over-period comparisons
-   - `components/metrics/AlertsPanel.tsx` - Notable changes and alerts
+7. In demos/step_5/:
+   - Create demo.py that:
+     - Starts the web server
+     - Demonstrates the full web workflow
+     - Shows responsive design features
 
-8. Implement dashboard export functionality:
-   - `utils/dashboardExport.tsx` - Dashboard screenshot and PDF generation
-   - Chart image export capabilities
-   - Shareable dashboard URLs with current filter state
-   - Print-friendly dashboard layouts
+8. Documentation (docs/step_5/):
+   - implementation_doc.md: Web architecture, template structure, styling approach
+   - test_doc.md: Testing strategy for web interface and user interactions
+   - demo_doc.md: Complete walkthrough of the web interface functionality
 
-9. Add advanced visualization features:
-   - Zoom and pan capabilities for time-series charts
-   - Multi-dimensional data exploration
-   - Correlation analysis visualizations
-   - Anomaly highlighting in charts
-
-10. Create dashboard navigation and layout:
-    - `components/navigation/DashboardNav.tsx` - Dashboard navigation sidebar
-    - Multi-tab dashboard organization
-    - Responsive layout for mobile and desktop
-    - Collapsible panels and customizable layouts
-
-11. Implement performance optimization:
-    - Virtual scrolling for large datasets
-    - Chart data pagination and lazy loading
-    - Memoization for expensive calculations
-    - Efficient re-rendering strategies
-
-12. Add comprehensive dashboard testing:
-    - Visual regression testing for charts
-    - Interactive component testing
-    - Performance testing with large datasets
-    - Cross-browser compatibility testing
-
-13. Create dashboard configuration:
-    - User preferences for dashboard layout
-    - Customizable metric thresholds and alerts
-    - Saved dashboard configurations
-    - Role-based dashboard permissions
-
-Ensure the dashboard provides intuitive insights and performs well with varying data volumes.
+Ensure the interface is intuitive, accessible, and provides clear feedback to users. Include proper error handling and loading states.
 ```
 
 ---
 
-## Step 9: Export System and Report Generation
+## Step 6: Analysis Dashboard Enhancement
 
-**Context**: Implement comprehensive export functionality with PDF and CSV generation featuring company-specific branding.
+### Objective
+Enhance the web interface with interactive charts, detailed metrics, and better data visualization for analysis results.
 
-**Objectives**:
-- Create PDF report generation with professional formatting
-- Implement CSV data export with proper structuring
-- Add company-specific branding to all exports
-- Build template system for different report types
+### Deliverables
+- Interactive charts for sentiment trends and topic analysis
+- Enhanced dashboard with multiple visualization types
+- Export functionality for basic reports
+- Improved user experience with better data presentation
 
-**Prompt**:
+### Validation Demo
+- Rich dashboard showing various charts and metrics
+- Interactive elements that respond to user input
+- Export functionality generating downloadable reports
+
+### LLM Prompt
+
 ```
-Develop a comprehensive export system for generating professional reports and data exports:
+Building on Steps 1-5, enhance the analysis dashboard with interactive visualizations and improved data presentation.
 
-1. Export system architecture in backend:
-   - Create `src/exports/` directory for export functionality
-   - `src/exports/base_exporter.py` - Abstract base class for all exporters
-   - `src/exports/pdf_exporter.py` - PDF report generation
-   - `src/exports/csv_exporter.py` - CSV data export
-   - `src/exports/template_engine.py` - Report template management
+Requirements:
+1. In src/linkedin_analyzer/templates/:
+   - Update analysis_results.html with:
+     - Interactive charts using Chart.js or similar
+     - Sentiment timeline visualization
+     - Topic distribution pie/bar charts
+     - Entity frequency displays
+     - Tabbed interface for different analysis views
+   
+   - Create report_template.html:
+     - Printable report layout
+     - Company branding placeholders
+     - Executive summary format
+     - Charts and data tables
 
-2. PDF report generation system:
-   - Use ReportLab or WeasyPrint for PDF generation
-   - `src/templates/pdf/` - PDF report templates
-   - Professional report layouts with company branding
-   - Dynamic content insertion with analysis results
-   - Chart and visualization embedding in PDFs
+2. In src/linkedin_analyzer/static/:
+   - Update css/styles.css with:
+     - Chart container styling
+     - Dashboard grid layout
+     - Print media queries for reports
+     - Enhanced responsive design
+   
+   - Update js/app.js with:
+     - Chart.js integration and configuration
+     - Dynamic chart data loading
+     - Interactive filtering controls
+     - Export button functionality
 
-3. Implement PDF report templates:
-   - Executive summary report template
-   - Detailed analysis report template
-   - Weekly trends report template
-   - Comparative analysis report template
-   - Custom report template builder
+3. In src/linkedin_analyzer/services/:
+   - Create report_service.py with:
+     - ReportService for generating export data
+     - PDF generation using WeasyPrint or similar
+     - CSV export functionality
+     - Report formatting and branding
 
-4. CSV export functionality:
-   - Multi-sheet CSV generation for complex data
-   - Structured data export with proper headers
-   - Time-series data formatting
-   - Entity and sentiment data export
-   - Configurable export parameters
+4. In src/linkedin_analyzer/web/:
+   - Update routes.py with:
+     - Enhanced dashboard route with chart data
+     - Export endpoints: /companies/{name}/export/pdf, /companies/{name}/export/csv
+     - API endpoints for chart data: /api/companies/{name}/chart-data
 
-5. Company branding integration:
-   - `src/utils/branding.py` - Company branding utilities
-   - Dynamic logo insertion and color scheme application
-   - Company-specific report headers and footers
-   - Branded file naming conventions
-   - Watermarking and company information inclusion
+5. In src/linkedin_analyzer/api/:
+   - Create charts.py with:
+     - Chart data API endpoints
+     - Data aggregation for visualizations
+     - Time-series data preparation
+     - Filtering and pagination support
 
-6. Export orchestration service:
-   - `src/services/export_service.py` - Coordinate export generation
-   - Async export processing for large reports
-   - Export queue management and status tracking
-   - File storage and cleanup management
+6. Update requirements.txt:
+   - Add weasyprint (or reportlab), matplotlib/plotly for backend charts
 
-7. Export API endpoints:
-   - POST /api/export/{company_id}/pdf - Generate PDF report
-   - POST /api/export/{company_id}/csv - Generate CSV export
-   - GET /api/export/{export_id}/status - Check export status
-   - GET /api/export/{export_id}/download - Download completed export
+7. In tests/:
+   - test_dashboard.py: Test dashboard functionality and data loading
+   - test_reports.py: Test export functionality
+   - test_charts_api.py: Test chart data API endpoints
 
-8. Frontend export interface:
-   - Create `components/export/ExportModal.tsx` - Export configuration dialog
-   - Add `components/export/ExportOptions.tsx` - Export parameter selection
-   - Implement `components/export/ExportStatus.tsx` - Export progress tracking
-   - Create download management and file organization
+8. In demos/step_6/:
+   - Create demo.py showing:
+     - Full dashboard with interactive charts
+     - Export functionality working
+     - Different visualization types
 
-9. Advanced export features:
-   - Scheduled report generation and delivery
-   - Email delivery of generated reports
-   - Batch export for multiple companies
-   - Export history and versioning
+9. Documentation (docs/step_6/):
+   - implementation_doc.md: Visualization strategy, chart library choices, export implementation
+   - test_doc.md: Testing approach for interactive elements and export functionality
+   - demo_doc.md: Comprehensive dashboard walkthrough and export demonstration
 
-10. Report customization system:
-    - `src/templates/` - Template management system
-    - User-configurable report sections
-    - Custom metrics inclusion/exclusion
-    - Date range and filtering options for exports
-    - Language-specific report generation
-
-11. Export quality assurance:
-    - PDF formatting validation and testing
-    - CSV data integrity verification
-    - Brand consistency checking
-    - Cross-platform compatibility testing
-
-12. Performance optimization:
-    - Large dataset export optimization
-    - Background processing for time-intensive exports
-    - Incremental export generation
-    - Export result caching
-
-13. Export management features:
-    - Export history and audit trail
-    - File expiration and cleanup policies
-    - Export sharing and collaboration features
-    - Access control for sensitive exports
-
-14. Comprehensive testing:
-    - PDF generation testing with various data scenarios
-    - CSV export validation with edge cases
-    - Branding consistency testing
-    - Performance testing with large datasets
-    - Cross-platform file compatibility testing
-
-Ensure exports are professional, accurate, and maintain consistent branding across all formats.
+Focus on user experience, ensure charts are responsive and accessible, and make export functionality robust with proper error handling.
 ```
 
 ---
 
-## Step 10: Authentication and User Management
+## Step 7: Company Profile Management System
 
-**Context**: Implement secure authentication system with user account management and role-based access control.
+### Objective
+Implement comprehensive company profile management with persistence, search functionality, and configuration templates.
 
-**Objectives**:
-- Add JWT-based authentication
-- Implement user registration and profile management
-- Create role-based access control
-- Add API rate limiting per user
+### Deliverables
+- File-based persistence for company configurations
+- Search and filtering capabilities for stored companies
+- Configuration templates for different company types
+- Import/export functionality for company profiles
 
-**Prompt**:
+### Validation Demo
+- System that persists company configurations between restarts
+- Search and filter functionality working with multiple stored companies
+- Template system that helps users configure similar companies quickly
+
+### LLM Prompt
+
 ```
-Implement a secure authentication and user management system:
+Building on Steps 1-6, implement a comprehensive company profile management system with persistence and advanced features.
 
-1. Authentication backend architecture:
-   - Create `src/auth/` directory for authentication modules
-   - `src/auth/models.py` - User and role SQLAlchemy models
-   - `src/auth/auth_service.py` - Authentication business logic
-   - `src/auth/jwt_handler.py` - JWT token management
-   - `src/auth/password_handler.py` - Password hashing and validation
+Requirements:
+1. In src/linkedin_analyzer/storage/:
+   - Create file_storage.py with:
+     - FileBasedStorage class replacing in-memory storage
+     - JSON-based persistence with atomic writes
+     - Backup and recovery mechanisms
+     - Index file for fast searches
+   
+   - Create storage_manager.py with:
+     - StorageManager that handles data integrity
+     - Migration support for schema changes
+     - Cleanup and maintenance operations
 
-2. User management system:
-   - User registration with email verification
-   - Secure password hashing using bcrypt
-   - User profile management (name, email, preferences)
-   - Account activation and password reset functionality
-   - User account suspension and deletion
+2. In src/linkedin_analyzer/models/:
+   - Update company.py with:
+     - CompanyTemplate model for reusable configurations
+     - CompanySearch model for search parameters
+     - CompanyMetadata for tracking creation/modification dates
+     - Enhanced validation with custom error messages
 
-3. JWT authentication implementation:
-   - Access token and refresh token system
-   - Token expiration and automatic refresh
-   - Token blacklisting for logout
-   - Secure token storage and transmission
-   - Multi-device session management
+3. In src/linkedin_analyzer/services/:
+   - Create company_service.py with:
+     - CompanyService for high-level company operations
+     - Search functionality (name, industry, size filtering)
+     - Template management (create, apply, list templates)
+     - Bulk operations (import, export, batch updates)
 
-4. Role-based access control (RBAC):
-   - Define user roles: admin, premium_user, basic_user
-   - Permission-based access to features
-   - Company configuration ownership and sharing
-   - Analysis history access control
-   - Export functionality restrictions by role
+4. In src/linkedin_analyzer/templates/:
+   - Create company_list.html with:
+     - Searchable, sortable company list
+     - Filtering by industry, size, analysis status
+     - Bulk action capabilities
+     - Template management interface
+   
+   - Create company_templates.html:
+     - Template creation and management interface
+     - Template preview and application
+     - Pre-built templates for common industries
 
-5. API rate limiting and security:
-   - `src/middleware/rate_limiter.py` - User-based rate limiting
-   - Different rate limits for different user tiers
-   - API abuse detection and prevention
-   - Request throttling and queuing
+5. In src/linkedin_analyzer/api/:
+   - Update company_config.py with:
+     - Search endpoint: GET /companies/search
+     - Template endpoints: GET/POST /companies/templates
+     - Bulk operations: POST /companies/bulk-import, GET /companies/export
+     - Metadata endpoints for statistics
 
-6. Authentication API endpoints:
-   - POST /api/auth/register - User registration
-   - POST /api/auth/login - User authentication
-   - POST /api/auth/refresh - Token refresh
-   - POST /api/auth/logout - User logout
-   - POST /api/auth/reset-password - Password reset
-   - GET /api/auth/profile - User profile
-   - PUT /api/auth/profile - Update user profile
+6. In src/linkedin_analyzer/web/:
+   - Update routes.py with:
+     - Company management dashboard
+     - Template management interface
+     - Import/export workflow pages
 
-7. Database migrations for user system:
-   - User table with proper indexes
-   - Role and permission tables
-   - User-company configuration relationships
-   - Session management tables
+7. Create data/templates/:
+   - Default templates for: startup.json, enterprise.json, tech_company.json, consulting.json
 
-8. Frontend authentication integration:
-   - Create `contexts/AuthContext.tsx` - Authentication state management
-   - Add `hooks/useAuth.tsx` - Authentication custom hook
-   - Implement `components/auth/LoginForm.tsx` - Login interface
-   - Create `components/auth/RegisterForm.tsx` - Registration interface
-   - Add `components/auth/ProfileSettings.tsx` - User profile management
+8. In tests/:
+   - test_file_storage.py: Test persistence and data integrity
+   - test_company_service.py: Test search and template functionality
+   - test_bulk_operations.py: Test import/export operations
 
-9. Protected routes and navigation:
-   - `utils/authGuard.tsx` - Route protection utilities
-   - Authentication-aware navigation components
-   - Conditional rendering based on user roles
-   - Automatic redirect to login for protected resources
+9. In demos/step_7/:
+   - Create demo.py showing:
+     - Company persistence across server restarts
+     - Search and filtering working with sample data
+     - Template system creating new company configurations
 
-10. Session management and security:
-    - Secure HTTP-only cookies for tokens
-    - CSRF protection implementation
-    - Session timeout and automatic logout
-    - Password strength requirements and validation
+10. Documentation (docs/step_7/):
+    - implementation_doc.md: Storage architecture, search implementation, template system design
+    - test_doc.md: Testing strategy for data persistence and bulk operations
+    - demo_doc.md: Complete company management workflow demonstration
 
-11. User onboarding and experience:
-    - Welcome email and account verification
-    - User onboarding wizard for first-time users
-    - Feature access based on subscription tier
-    - Usage analytics and limits tracking
-
-12. Security middleware and monitoring:
-    - Authentication attempt logging
-    - Suspicious activity detection
-    - Account lockout after failed attempts
-    - Security audit logs
-
-13. Integration with existing features:
-    - Company configuration ownership assignment
-    - Analysis history per user
-    - Export access control
-    - Usage metrics per user account
-
-14. Comprehensive testing:
-    - Authentication flow testing
-    - Authorization and permission testing
-    - Security vulnerability testing
-    - Rate limiting validation
-    - Token management testing
-
-15. NGINX/Traefik integration:
-    - HTTPS enforcement
-    - Security headers configuration
-    - SSL/TLS certificate management
-    - Reverse proxy authentication pass-through
-
-Ensure the authentication system is secure, scalable, and provides a smooth user experience.
+Ensure data integrity, implement proper error handling for file operations, and make the search functionality fast and intuitive.
 ```
 
 ---
 
-## Step 11: Monitoring and Observability
+## Step 8: Advanced NLP Features and Trend Analysis
 
-**Context**: Implement comprehensive monitoring, logging, and metrics collection using Prometheus and structured logging.
+### Objective
+Implement advanced NLP features including trend forecasting, competitive analysis, and enhanced entity linking with external data sources.
 
-**Objectives**:
-- Add Prometheus metrics collection
-- Implement structured logging system
-- Create health checks and monitoring endpoints
-- Build performance monitoring and alerting
+### Deliverables
+- Trend analysis and forecasting capabilities
+- Enhanced entity linking to external sources
+- Competitive analysis features
+- Historical data comparison and insights
 
-**Prompt**:
+### Validation Demo
+- System showing trend analysis and forecasts
+- Enhanced entity information with external links
+- Comparative analysis between companies
+- Historical trend visualizations
+
+### LLM Prompt
+
 ```
-Implement comprehensive monitoring and observability for production readiness:
+Building on Steps 1-7, implement advanced NLP features and trend analysis capabilities.
 
-1. Prometheus metrics integration:
-   - Add `prometheus-client` to backend dependencies
-   - Create `src/monitoring/metrics.py` - Custom metrics definitions
-   - Implement application-level metrics collection
-   - Add business metrics specific to LinkedIn analysis
+Requirements:
+1. In src/linkedin_analyzer/models/:
+   - Create advanced_analysis.py with:
+     - TrendAnalysis (trend_direction, confidence, forecast_period, key_drivers)
+     - EntityEnrichment (entity, external_links, additional_info, confidence)
+     - CompetitiveInsight (company_comparison, market_position, differentiators)
+     - HistoricalTrend (time_series_data, trend_analysis, seasonality_patterns)
 
-2. Custom metrics implementation:
-   - Company analysis success/failure rates
-   - Data collection volume and processing time
-   - API endpoint response times and error rates
-   - NLP processing performance metrics
-   - Export generation metrics
-   - User activity and engagement metrics
+2. In src/linkedin_analyzer/nlp/:
+   - Create trend_analyzer.py with:
+     - TrendAnalyzer using time series analysis
+     - Sentiment trend detection and forecasting
+     - Topic evolution tracking
+     - Statistical trend significance testing
+   
+   - Create entity_enricher.py with:
+     - EntityEnricher connecting to external APIs (Wikipedia, DBpedia)
+     - Entity disambiguation and verification
+     - Additional context gathering for entities
+     - Confidence scoring for enrichment quality
+   
+   - Create competitive_analyzer.py with:
+     - CompetitiveAnalyzer for multi-company analysis
+     - Market positioning insights
+     - Comparative sentiment and topic analysis
+     - Industry benchmarking capabilities
 
-3. System health monitoring:
-   - `src/monitoring/health_checker.py` - Health check service
-   - Database connection health checks
-   - External API availability checks
-   - Memory and CPU usage monitoring
-   - Disk space and storage monitoring
+3. In src/linkedin_analyzer/services/:
+   - Create advanced_analysis_service.py with:
+     - AdvancedAnalysisService orchestrating complex analysis
+     - Historical data aggregation and comparison
+     - Trend forecasting with confidence intervals
+     - Competitive intelligence generation
 
-4. Structured logging system:
-   - Configure structured JSON logging using Python logging
-   - `src/utils/logger.py` - Centralized logging configuration
-   - Context-aware logging with request IDs
-   - Error tracking with stack traces
-   - Performance logging for slow operations
+4. In src/linkedin_analyzer/external/:
+   - Create wikipedia_client.py for entity enrichment
+   - Create dbpedia_client.py for structured data
+   - Create rate_limiting.py for API management
+   - Implement caching for external API calls
 
-5. Monitoring endpoints:
-   - GET /metrics - Prometheus metrics endpoint
-   - GET /health - Application health check
-   - GET /health/detailed - Detailed system status
-   - GET /monitoring/stats - Application statistics
+5. In src/linkedin_analyzer/templates/:
+   - Create advanced_analysis.html with:
+     - Trend forecasting charts
+     - Enhanced entity displays with external links
+     - Competitive analysis dashboard
+     - Historical comparison interfaces
+   
+   - Update analysis_results.html with:
+     - Advanced insights section
+     - Trend indicators and forecasts
+     - Enhanced entity information
 
-6. Error tracking and alerting:
-   - `src/monitoring/error_tracker.py` - Error categorization and tracking
-   - Critical error alerting system
-   - Performance degradation detection
-   - Anomaly detection for business metrics
+6. In src/linkedin_analyzer/api/:
+   - Create advanced_analysis.py with:
+     - GET /companies/{name}/trends
+     - GET /companies/{name}/competitive-analysis
+     - GET /companies/compare (multi-company analysis)
+     - POST /companies/{name}/enrich-entities
 
-7. Performance monitoring:
-   - Request/response time tracking
-   - Database query performance monitoring
-   - Memory usage and leak detection
-   - NLP processing performance analysis
-   - API rate limiting effectiveness
+7. Update requirements.txt:
+   - Add requests, numpy, scipy for advanced analytics
+   - Add cachetools for API response caching
 
-8. Business metrics dashboards:
-   - Company-specific analysis metrics
-   - User engagement and feature usage
-   - Export generation patterns
-   - Popular company configurations
-   - Processing time by company size
+8. In tests/:
+   - test_trend_analyzer.py: Test trend detection accuracy
+   - test_entity_enricher.py: Test external API integration
+   - test_competitive_analyzer.py: Test comparative analysis
+   - test_advanced_analysis_integration.py: End-to-end advanced features
 
-9. Frontend monitoring integration:
-   - Error boundary implementation for React
-   - User interaction tracking
-   - Performance monitoring (Core Web Vitals)
-   - API error monitoring and user feedback
+9. In demos/step_8/:
+   - Create demo.py showing:
+     - Trend analysis and forecasting in action
+     - Entity enrichment with external data
+     - Competitive analysis between companies
+     - Advanced dashboard features
 
-10. Log aggregation and analysis:
-    - Centralized log collection setup
-    - Log retention and rotation policies
-    - Log search and analysis capabilities
-    - Security event logging and monitoring
+10. Documentation (docs/step_8/):
+    - implementation_doc.md: Advanced NLP architecture, external integrations, analysis methodologies
+    - test_doc.md: Testing strategy for complex analytics and external dependencies
+    - demo_doc.md: Advanced analysis features demonstration
 
-11. Infrastructure monitoring:
-    - Docker container metrics
-    - Database performance monitoring
-    - Redis cache hit rates and performance
-    - Network and I/O monitoring
-
-12. Alerting and notification system:
-    - Configurable alert thresholds
-    - Multi-channel notification (email, Slack, etc.)
-    - Alert escalation policies
-    - Maintenance mode and alert suppression
-
-13. Performance optimization insights:
-    - Slow query identification and optimization
-    - Resource usage pattern analysis
-    - Bottleneck identification and resolution
-    - Capacity planning metrics
-
-14. Monitoring configuration:
-    - Environment-specific monitoring settings
-    - Configurable metric collection intervals
-    - Dynamic monitoring rule updates
-    - A/B testing for monitoring improvements
-
-15. Documentation and runbooks:
-    - Monitoring setup and configuration guides
-    - Alert response procedures
-    - Performance troubleshooting guides
-    - Capacity planning documentation
-
-16. Testing and validation:
-    - Monitoring system testing
-    - Alert simulation and validation
-    - Performance baseline establishment
-    - Monitoring data accuracy verification
-
-Ensure comprehensive observability while maintaining system performance and avoiding monitoring overhead.
+Focus on accuracy of predictions, handle external API failures gracefully, and ensure advanced features enhance rather than complicate the user experience.
 ```
 
 ---
 
-## Step 12: Production Deployment and Infrastructure
+## Step 9: Authentication, Security, and User Management
 
-**Context**: Create production-ready deployment configuration with Docker, container orchestration, and infrastructure as code.
+### Objective
+Implement user authentication, authorization, data encryption, and security best practices throughout the application.
 
-**Objectives**:
-- Create production Docker configurations
-- Implement container orchestration
-- Add environment-specific configurations
-- Set up CI/CD pipeline foundations
+### Deliverables
+- User registration and authentication system
+- Role-based access control
+- Data encryption for sensitive information
+- Security middleware and compliance features
 
-**Prompt**:
+### Validation Demo
+- Working authentication system with user registration and login
+- Role-based access showing different user permissions
+- Data encryption protecting sensitive company information
+- Security headers and compliance features active
+
+### LLM Prompt
+
 ```
-Create production-ready deployment infrastructure and orchestration:
+Building on Steps 1-8, implement comprehensive authentication, security, and user management features.
 
-1. Production Docker configuration:
-   - Create optimized `Dockerfile` for backend with multi-stage builds
-   - Create production `Dockerfile` for frontend with NGINX serving
-   - Implement `docker-compose.prod.yml` for production deployment
-   - Add health checks and proper signal handling
+Requirements:
+1. In src/linkedin_analyzer/models/:
+   - Create user.py with:
+     - User model (id, email, hashed_password, role, created_at, last_login)
+     - UserRole enum (admin, analyst, viewer)
+     - UserSession model for session management
+     - UserPreferences for customization settings
 
-2. Container orchestration setup:
-   - Create Kubernetes manifests in `k8s/` directory
-   - Implement deployment, service, and ingress configurations
-   - Add ConfigMaps and Secrets for environment configuration
-   - Set up horizontal pod autoscaling (HPA)
+2. In src/linkedin_analyzer/auth/:
+   - Create password_utils.py with:
+     - Password hashing using bcrypt
+     - Password strength validation
+     - Secure random token generation
+   
+   - Create jwt_handler.py with:
+     - JWT token creation and validation
+     - Token refresh mechanism
+     - Blacklist management for logout
+   
+   - Create auth_middleware.py with:
+     - Authentication middleware for FastAPI
+     - Role-based authorization decorators
+     - Session management
 
-3. NGINX reverse proxy configuration:
-   - Create `nginx/` directory with configuration files
-   - Implement SSL/TLS termination and HTTPS enforcement
-   - Add rate limiting and security headers
-   - Configure API proxy and static file serving
+3. In src/linkedin_analyzer/security/:
+   - Create encryption.py with:
+     - Data encryption for sensitive company information
+     - Field-level encryption for email domains, etc.
+     - Key management and rotation
+   
+   - Create security_headers.py with:
+     - HTTPS enforcement middleware
+     - Security headers (HSTS, CSP, etc.)
+     - CORS configuration
+   
+   - Create rate_limiting.py with:
+     - API rate limiting per user/IP
+     - Abuse prevention mechanisms
 
-4. Environment configuration management:
-   - Create `.env.production` template file
-   - Implement environment-specific configuration loading
-   - Add secrets management for sensitive data
-   - Create configuration validation on startup
+4. In src/linkedin_analyzer/services/:
+   - Create user_service.py with:
+     - UserService for user management operations
+     - Registration, login, profile management
+     - Password reset functionality
+     - User activity tracking
 
-5. Database production setup:
-   - PostgreSQL production configuration with proper tuning
-   - Database backup and recovery procedures
-   - Connection pooling and performance optimization
-   - Migration rollback and versioning strategies
+5. In src/linkedin_analyzer/templates/:
+   - Create auth/ directory with:
+     - login.html, register.html, forgot_password.html
+     - user_profile.html for account management
+     - admin_dashboard.html for user administration
+   
+   - Update base.html with:
+     - User authentication state display
+     - Login/logout functionality
+     - Role-based menu items
 
-6. Redis caching production setup:
-   - Redis cluster configuration for high availability
-   - Cache eviction policies and memory management
-   - Persistent storage configuration for important cache data
-   - Redis monitoring and performance tuning
+6. In src/linkedin_analyzer/api/:
+   - Create auth.py with:
+     - POST /auth/register, /auth/login, /auth/logout
+     - POST /auth/refresh-token
+     - POST /auth/forgot-password, /auth/reset-password
+   
+   - Create users.py with:
+     - GET/PUT /users/profile
+     - GET /users (admin only)
+     - User management endpoints
 
-7. Production security hardening:
-   - Container security scanning and vulnerability management
-   - Network security policies and firewall rules
-   - Secrets encryption and rotation policies
-   - Security headers and OWASP compliance
+7. Update existing APIs with:
+   - Authentication requirements
+   - Role-based authorization checks
+   - User ownership validation for company data
 
-8. Monitoring and logging infrastructure:
-   - Prometheus server configuration and data persistence
-   - Grafana dashboard setup for visualization
-   - ELK stack or similar for log aggregation
-   - Alert manager configuration for notifications
+8. In src/linkedin_analyzer/database/:
+   - Create user_storage.py with:
+     - Secure user data persistence
+     - Encrypted field handling
+     - Session management storage
 
-9. Backup and disaster recovery:
-   - Database backup automation and testing
-   - Application data backup procedures
-   - Disaster recovery runbooks and testing
-   - Point-in-time recovery capabilities
+9. In tests/:
+   - test_authentication.py: Test login/logout flows
+   - test_authorization.py: Test role-based access
+   - test_encryption.py: Test data encryption
+   - test_security_middleware.py: Test security features
 
-10. CI/CD pipeline foundation:
-    - Create `.github/workflows/` for GitHub Actions
-    - Implement build, test, and deployment pipelines
-    - Add automated security scanning
-    - Set up staging environment deployment
+10. In demos/step_9/:
+    - Create demo.py showing:
+      - User registration and login
+      - Different user roles and permissions
+      - Data encryption protecting sensitive information
+      - Security features in action
 
-11. Infrastructure as Code:
-    - Terraform or similar IaC tools for cloud resources
-    - Version-controlled infrastructure configuration
-    - Environment provisioning automation
-    - Infrastructure testing and validation
+11. Documentation (docs/step_9/):
+    - implementation_doc.md: Security architecture, authentication flow, encryption strategy
+    - test_doc.md: Security testing methodology and compliance validation
+    - demo_doc.md: Authentication and security features demonstration
 
-12. Performance optimization:
-    - Production performance tuning guidelines
-    - Caching strategies and optimization
-    - Database query optimization
-    - CDN integration for static assets
+Update requirements.txt with: passlib[bcrypt], python-jose[cryptography], python-multipart
 
-13. Deployment strategies:
-    - Blue-green deployment configuration
-    - Rolling updates with health checks
-    - Canary deployment capabilities
-    - Rollback procedures and automation
-
-14. Production monitoring dashboards:
-    - System performance dashboards
-    - Business metrics visualization
-    - Error tracking and alerting dashboards
-    - Capacity planning and resource utilization
-
-15. Documentation and operational procedures:
-    - Deployment documentation and runbooks
-    - Troubleshooting guides and FAQ
-    - Emergency response procedures
-    - Maintenance and update procedures
-
-16. Load testing and capacity planning:
-    - Load testing scripts and scenarios
-    - Performance benchmarking procedures
-    - Capacity planning metrics and thresholds
-    - Scalability testing and validation
-
-Ensure the deployment is secure, scalable, and maintainable in production environments.
-```
-
----
-
-## Step 13: Performance Optimization and Caching
-
-**Context**: Implement comprehensive caching strategies and performance optimizations for production scalability.
-
-**Objectives**:
-- Implement multi-layer caching strategy
-- Optimize database queries and API performance
-- Add background job processing
-- Create performance monitoring and optimization
-
-**Prompt**:
-```
-Implement comprehensive performance optimization and caching strategies:
-
-1. Multi-layer caching architecture:
-   - Create `src/cache/` directory for caching modules
-   - `src/cache/cache_manager.py` - Unified cache management
-   - `src/cache/redis_cache.py` - Redis-based caching implementation
-   - `src/cache/memory_cache.py` - In-memory caching for hot data
-
-2. API response caching:
-   - Implement response caching middleware
-   - Cache configuration and analysis results
-   - Smart cache invalidation strategies
-   - Cache warming for frequently accessed data
-   - ETags and HTTP caching headers
-
-3. Database query optimization:
-   - Add database query caching layer
-   - Implement connection pooling optimization
-   - Create database indexes for common queries
-   - Add query performance monitoring
-   - Implement read replicas for scaling
-
-4. Background job processing:
-   - Add Celery or similar for async task processing
-   - `src/tasks/` directory for background tasks
-   - Queue management for data collection and analysis
-   - Task retry mechanisms and error handling
-   - Task monitoring and performance tracking
-
-5. NLP processing optimization:
-   - Model caching and reuse strategies
-   - Batch processing for multiple documents
-   - GPU acceleration setup (if applicable)
-   - Result caching for expensive NLP operations
-   - Incremental processing for large datasets
-
-6. Frontend performance optimization:
-   - Implement React Query or SWR for data fetching
-   - Add service worker for offline capabilities
-   - Optimize bundle size and code splitting
-   - Image optimization and lazy loading
-   - Implement virtual scrolling for large datasets
-
-7. Data pipeline optimization:
-   - Implement data streaming for large collections
-   - Parallel processing for independent operations
-   - Memory optimization for large datasets
-   - Efficient data structures and algorithms
-   - Progress tracking and partial result caching
-
-8. Cache invalidation strategies:
-   - Time-based expiration for different data types
-   - Event-driven invalidation for data updates
-   - Tag-based cache invalidation
-   - Cache hierarchy and dependency management
-   - Graceful degradation when cache is unavailable
-
-9. Performance monitoring and profiling:
-   - Add performance profiling middleware
-   - Database query performance tracking
-   - API endpoint response time monitoring
-   - Memory usage and leak detection
-   - Cache hit rate monitoring and optimization
-
-10. Content Delivery Network (CDN) integration:
-    - Static asset optimization and CDN deployment
-    - API response caching at edge locations
-    - Geographic data distribution
-    - Cache purging and invalidation at CDN level
-
-11. Database optimization:
-    - Query optimization and index tuning
-    - Database connection pooling
-    - Read/write splitting for scalability
-    - Database partitioning for large datasets
-    - Query result caching and materialized views
-
-12. Resource management and scaling:
-    - Horizontal scaling configuration
-    - Load balancing and traffic distribution
-    - Auto-scaling based on performance metrics
-    - Resource usage optimization
-    - Cost optimization strategies
-
-13. API rate limiting and throttling:
-    - Intelligent rate limiting based on user behavior
-    - Priority queuing for different request types
-    - Graceful degradation under high load
-    - Request queuing and buffering
-    - Load shedding mechanisms
-
-14. Performance testing and benchmarking:
-    - Automated performance regression testing
-    - Load testing scenarios and scripts
-    - Performance benchmarking suite
-    - Capacity planning and threshold monitoring
-    - Performance optimization recommendations
-
-15. Optimization configuration and tuning:
-    - Environment-specific performance settings
-    - Dynamic configuration updates
-    - A/B testing for performance improvements
-    - Performance optimization feedback loops
-    - Continuous performance monitoring
-
-16. Documentation and best practices:
-    - Performance optimization guidelines
-    - Caching strategy documentation
-    - Performance troubleshooting guides
-    - Best practices for developers
-    - Performance monitoring runbooks
-
-Ensure optimal performance while maintaining system reliability and user experience quality.
+Ensure GDPR compliance, implement proper session management, and follow security best practices throughout.
 ```
 
 ---
 
-## Step 14: Advanced Features and Multi-Company Support
+## Step 10: Monitoring, Metrics, and Production Readiness
 
-**Context**: Implement advanced features including multi-company comparison, saved configurations, and premium functionality.
+### Objective
+Implement comprehensive monitoring, Prometheus metrics, logging, error handling, and production deployment configuration.
 
-**Objectives**:
-- Add multi-company comparison dashboard
-- Implement advanced filtering and search
-- Create configuration templates and management
-- Add premium feature differentiation
+### Deliverables
+- Prometheus metrics integration
+- Comprehensive logging system
+- Error tracking and alerting
+- Production deployment configuration
+- Performance monitoring and optimization
 
-**Prompt**:
+### Validation Demo
+- Working metrics endpoint with business and technical metrics
+- Comprehensive logging showing system operations
+- Error handling and recovery mechanisms
+- Production-ready deployment configuration
+
+### LLM Prompt
+
 ```
-Implement advanced features and multi-company comparison capabilities:
+Building on Steps 1-9, implement comprehensive monitoring, metrics, and production readiness features.
 
-1. Multi-company comparison system:
-   - Create `src/services/comparison_service.py` - Company comparison logic
-   - Implement comparative analysis algorithms
-   - Side-by-side metrics comparison
-   - Benchmark calculation against industry averages
-   - Competitive intelligence features
+Requirements:
+1. In src/linkedin_analyzer/monitoring/:
+   - Create metrics.py with:
+     - Prometheus metrics using prometheus_client
+     - Business metrics (companies analyzed, user registrations, analysis requests)
+     - Technical metrics (response times, error rates, resource usage)
+     - Custom metric collectors for company-specific analytics
+   
+   - Create logging_config.py with:
+     - Structured logging using Python logging
+     - Log levels and formatting
+     - Context injection (user_id, company_name, etc.)
+     - Sensitive data filtering
+   
+   - Create health_checks.py with:
+     - Comprehensive health check system
+     - Dependency checks (database, external APIs)
+     - System resource monitoring
 
-2. Advanced company management:
-   - `src/models/company_profile.py` - Enhanced company profile models
-   - Company grouping and categorization
-   - Industry-specific templates and configurations
-   - Company relationship mapping (parent/subsidiary)
-   - Bulk company configuration management
+2. In src/linkedin_analyzer/observability/:
+   - Create error_tracking.py with:
+     - Error capture and categorization
+     - Error rate monitoring and alerting
+     - Error context preservation
+   
+   - Create performance_monitor.py with:
+     - Request/response time tracking
+     - Resource usage monitoring
+     - Performance bottleneck detection
 
-3. Multi-company dashboard:
-   - Create `components/comparison/ComparisonDashboard.tsx`
-   - Add `components/comparison/MetricsComparison.tsx`
-   - Implement `components/comparison/CompanySelector.tsx`
-   - Create side-by-side visualization components
-   - Add comparison export functionality
+3. In src/linkedin_analyzer/config/:
+   - Create settings.py with:
+     - Environment-specific configuration
+     - Security settings management
+     - Feature flags system
+   
+   - Create deployment_config.py with:
+     - Production deployment settings
+     - Database connection pooling
+     - Cache configuration
 
-4. Advanced filtering and search:
-   - `src/services/search_service.py` - Enhanced search capabilities
-   - Full-text search across company configurations
-   - Advanced filtering by multiple criteria
-   - Saved search configurations
-   - Search history and recommendations
+4. Update src/linkedin_analyzer/main.py with:
+   - Metrics endpoint (/metrics for Prometheus)
+   - Enhanced error handling middleware
+   - Startup and shutdown event handlers
+   - Health check endpoint improvements
 
-5. Configuration template system:
-   - `src/templates/company_types/` - Industry-specific templates
-   - Template inheritance and customization
-   - Template marketplace for sharing configurations
-   - Version control for template changes
-   - Template validation and testing
+5. Create deployment/:
+   - docker/Dockerfile for containerization
+   - docker/docker-compose.yml for development
+   - kubernetes/ manifests for K8s deployment
+   - nginx/nginx.conf for reverse proxy
 
-6. Premium feature implementation:
-   - Feature flagging system based on user subscription
-   - Advanced analytics for premium users
-   - Extended data retention for premium accounts
-   - Priority processing and support
-   - Custom branding and white-label options
+6. Create monitoring/:
+   - prometheus.yml configuration
+   - grafana/dashboards/ for visualization
+   - alerting/rules.yml for Prometheus alerts
 
-7. Advanced analytics features:
-   - Predictive analytics and machine learning models
-   - Anomaly detection and alerting
-   - Custom metric definitions and calculations
-   - Advanced statistical analysis and correlations
-   - Industry benchmarking and competitive analysis
+7. In src/linkedin_analyzer/middleware/:
+   - Create request_logging.py for request/response logging
+   - Create metrics_middleware.py for automatic metric collection
+   - Create error_handling.py for global error handling
 
-8. Data integration enhancements:
-   - Multiple data source integration
-   - Custom data connectors and APIs
-   - Data quality scoring and validation
-   - Data lineage and audit trails
-   - Real-time data streaming capabilities
+8. Update requirements.txt with:
+   - prometheus-client, structlog
+   - uvicorn[standard] for production ASGI server
 
-9. Collaboration features:
-   - Team workspaces and shared configurations
-   - Comment and annotation system
-   - Report sharing and collaboration
-   - Role-based permissions for team features
-   - Activity feeds and notifications
+9. In tests/:
+   - test_metrics.py: Test metric collection and exposure
+   - test_monitoring.py: Test health checks and performance monitoring
+   - test_production_config.py: Test production configuration
+   - test_deployment.py: Integration tests for deployed system
 
-10. Advanced export and reporting:
-    - Custom report builder with drag-and-drop
-    - Scheduled report generation and delivery
-    - Interactive dashboard embedding
-    - API access for programmatic report generation
-    - White-label report customization
+10. In demos/step_10/:
+    - Create demo.py showing:
+      - Metrics collection and Prometheus endpoint
+      - Logging system capturing operations
+      - Health checks and monitoring
+      - Production deployment simulation
 
-11. Enhanced user experience:
-    - Personalized dashboards and preferences
-    - Intelligent recommendations and suggestions
-    - Advanced tutorial and onboarding
-    - Contextual help and documentation
-    - Mobile-responsive advanced features
+11. Documentation (docs/step_10/):
+    - implementation_doc.md: Monitoring architecture, metrics strategy, deployment approach
+    - test_doc.md: Testing strategy for production readiness and observability
+    - demo_doc.md: Complete monitoring and deployment demonstration
 
-12. API enhancements:
-    - GraphQL API for flexible data querying
-    - Webhook support for real-time notifications
-    - Bulk operations and batch processing
-    - API versioning and backward compatibility
-    - Developer tools and documentation
+12. Create operational documentation:
+    - DEPLOYMENT.md with step-by-step deployment instructions
+    - MONITORING.md with metrics and alerting guide
+    - TROUBLESHOOTING.md with common issues and solutions
 
-13. Advanced security features:
-    - Advanced audit logging and compliance
-    - Data encryption at rest and in transit
-    - Advanced access controls and permissions
-    - Security scanning and vulnerability management
-    - Compliance reporting and certifications
-
-14. Performance and scalability:
-    - Microservices architecture for advanced features
-    - Advanced caching and performance optimization
-    - Real-time processing and streaming analytics
-    - Auto-scaling and load balancing
-    - Performance monitoring and optimization
-
-15. Integration capabilities:
-    - Third-party tool integrations (Slack, Teams, etc.)
-    - CRM and business intelligence integrations
-    - Data warehouse and analytics platform connections
-    - Marketing automation and email platform integrations
-    - Custom integration framework and SDK
-
-16. Testing and quality assurance:
-    - Advanced feature testing and validation
-    - Performance testing for multi-company scenarios
-    - Security testing and penetration testing
-    - User experience testing and optimization
-    - Comprehensive integration testing
-
-Ensure advanced features provide significant value while maintaining system performance and user experience.
+Focus on operational excellence, ensure metrics are actionable, implement proper alerting thresholds, and make the system production-ready with proper error handling and recovery mechanisms.
 ```
 
 ---
 
-## Step 15: Testing, Documentation, and Production Launch
+## Final Integration and Testing
 
-**Context**: Finalize the application with comprehensive testing, documentation, and production readiness validation.
+### Objective
+Perform comprehensive integration testing, end-to-end validation, performance testing, and final system optimization.
 
-**Objectives**:
-- Implement comprehensive testing suite
-- Create complete documentation
-- Perform production readiness validation
-- Prepare for launch and maintenance
+### Deliverables
+- Complete end-to-end test suite
+- Performance benchmarks and optimization
+- Load testing results
+- Final system documentation
+- Production deployment guide
 
-**Prompt**:
+### LLM Prompt
+
 ```
-Complete the application with comprehensive testing, documentation, and production launch preparation:
+Building on Steps 1-10, perform final integration, comprehensive testing, and system optimization.
 
-1. Comprehensive testing suite:
-   - Create `tests/` directory structure for all test types
-   - Unit tests for all backend services and utilities
-   - Integration tests for API endpoints and database operations
-   - End-to-end tests using Playwright or Cypress
-   - Performance and load testing scenarios
+Requirements:
+1. In tests/:
+   - Create integration/ directory with:
+     - test_end_to_end.py: Complete user journey testing
+     - test_api_integration.py: Full API workflow testing
+     - test_performance.py: Performance and load testing
+     - test_security_integration.py: Security feature integration testing
+   
+   - Create load_tests/ with:
+     - locustfile.py for load testing with Locust
+     - performance_benchmarks.py for measuring system performance
+     - stress_test_scenarios.py for edge case testing
 
-2. Backend testing implementation:
-   - `tests/unit/` - Unit tests for all modules
-   - `tests/integration/` - Integration tests for services
-   - `tests/api/` - API endpoint testing with pytest
-   - Mock external dependencies and services
-   - Database testing with test fixtures and cleanup
+2. In src/linkedin_analyzer/optimization/:
+   - Create performance_optimizer.py with:
+     - Database query optimization
+     - Caching strategy implementation
+     - Memory usage optimization
+   
+   - Create cache_manager.py with:
+     - Redis integration for distributed caching
+     - Cache invalidation strategies
+     - Performance metrics for cache effectiveness
 
-3. Frontend testing implementation:
-   - `frontend/src/__tests__/` - Component and hook tests
-   - React Testing Library for component testing
-   - Jest for unit tests and mocking
-   - Cypress or Playwright for E2E testing
-   - Visual regression testing for UI components
+3. Create comprehensive documentation:
+   - README.md: Complete project overview and quick start
+   - ARCHITECTURE.md: Detailed system architecture documentation
+   - API_DOCUMENTATION.md: Complete API reference
+   - USER_GUIDE.md: End-user documentation
+   - DEPLOYMENT.md: Production deployment guide
 
-4. Test data management:
-   - `tests/fixtures/` - Test data fixtures and factories
-   - Mock LinkedIn data generation for testing
-   - Test company configurations and scenarios
-   - Database seeding for integration tests
-   - Test data cleanup and isolation
+4. Create scripts/:
+   - setup.sh: Development environment setup
+   - deploy.sh: Production deployment automation
+   - migrate.sh: Database migration handling
+   - backup.sh: Data backup and recovery
 
-5. Performance and load testing:
-   - `tests/performance/` - Performance testing scripts
-   - Load testing scenarios with varying user loads
-   - Stress testing for system limits
-   - Database performance testing
-   - API response time validation
+5. In demos/final_demo/:
+   - Create complete_workflow_demo.py showing:
+     - Full system capabilities demonstration
+     - Performance under load
+     - All features working together
+     - Production deployment simulation
 
-6. Security testing implementation:
-   - Authentication and authorization testing
-   - Input validation and sanitization testing
-   - SQL injection and XSS vulnerability testing
-   - API security testing
-   - Data privacy and GDPR compliance validation
+6. Performance optimization tasks:
+   - Database query optimization and indexing
+   - API response time optimization
+   - Memory usage profiling and optimization
+   - Caching implementation for frequently accessed data
 
-7. Complete documentation system:
-   - `docs/` directory with comprehensive documentation
-   - API documentation with OpenAPI/Swagger
-   - User guides and tutorials
-   - Developer documentation and setup guides
-   - Architecture documentation and diagrams
+7. Security hardening:
+   - Security audit and vulnerability assessment
+   - Penetration testing simulation
+   - Security configuration validation
+   - GDPR compliance verification
 
-8. User documentation:
-   - `docs/user/` - End-user documentation
-   - Getting started guides and tutorials
-   - Feature documentation with screenshots
-   - Troubleshooting guides and FAQ
-   - Video tutorials and walkthroughs
+8. Final testing and validation:
+   - Cross-browser testing for web interface
+   - Mobile responsiveness testing
+   - API performance under load
+   - Data integrity validation
+   - Backup and recovery testing
 
-9. Developer documentation:
-   - `docs/developer/` - Technical documentation
-   - API reference and examples
-   - Architecture overview and design decisions
-   - Development setup and contribution guidelines
-   - Code style guides and best practices
+9. Documentation (docs/final/):
+   - implementation_doc.md: Final system architecture and all component integration
+   - test_doc.md: Comprehensive testing strategy and results
+   - demo_doc.md: Complete system demonstration guide
+   - deployment_guide.md: Production deployment and operations guide
 
-10. Operations documentation:
-    - `docs/operations/` - Deployment and maintenance guides
-    - Infrastructure setup and configuration
-    - Monitoring and alerting procedures
-    - Backup and disaster recovery procedures
-    - Troubleshooting and support runbooks
+10. Update requirements.txt with production dependencies:
+    - redis, celery for distributed processing
+    - gunicorn for production WSGI server
+    - locust for load testing
 
-11. Production readiness validation:
-    - Security audit and vulnerability assessment
-    - Performance benchmarking and optimization
-    - Scalability testing and validation
-    - Disaster recovery testing and validation
-    - Compliance and regulatory requirements check
-
-12. Launch preparation:
-    - Production environment setup and validation
-    - DNS configuration and SSL certificate setup
-    - CDN configuration and testing
-    - Monitoring and alerting system validation
-    - Backup and recovery system testing
-
-13. Quality assurance and validation:
-    - Cross-browser compatibility testing
-    - Mobile responsiveness validation
-    - Accessibility compliance testing (WCAG)
-    - User acceptance testing (UAT)
-    - Performance benchmarking against requirements
-
-14. Launch checklist and procedures:
-    - Pre-launch testing checklist
-    - Launch day procedures and timeline
-    - Rollback procedures and criteria
-    - Post-launch monitoring and validation
-    - User communication and support procedures
-
-15. Post-launch support preparation:
-    - Bug tracking and issue management system
-    - User support documentation and procedures
-    - Feature request tracking and prioritization
-    - Maintenance and update procedures
-    - Performance monitoring and optimization
-
-16. Continuous improvement framework:
-    - User feedback collection and analysis
-    - Performance monitoring and optimization
-    - Feature usage analytics and insights
-    - A/B testing framework for improvements
-    - Long-term roadmap and feature planning
-
-17. Final validation and sign-off:
-    - All requirements validation and sign-off
-    - Security and compliance certification
-    - Performance and scalability validation
-    - Documentation completeness review
-    - Production readiness assessment
-
-Ensure the application is fully tested, documented, and ready for production deployment and ongoing maintenance.
+Ensure the system is production-ready, fully documented, properly tested, and optimized for performance and security.
 ```
+
+---
 
 ## Summary
 
-This comprehensive prompt plan provides a structured, iterative approach to building the LinkedIn Company Analysis Tool. Each step builds upon the previous ones, ensuring:
+This implementation plan breaks down the LinkedIn Company Analysis Tool into 10 manageable steps, each building on the previous ones:
 
-- **Incremental Progress**: No large complexity jumps between steps
-- **Integration Focus**: Each step integrates with previous work
-- **Best Practices**: Security, performance, and maintainability throughout
-- **Production Ready**: Complete system ready for deployment
-- **Comprehensive Testing**: Quality assurance at every level
-- **Complete Documentation**: User and developer documentation
+1. **Foundation** - Basic web framework and project structure
+2. **Data Models** - Company configuration and validation
+3. **Mock Data** - Data collection simulation system
+4. **NLP Core** - Basic sentiment and topic analysis
+5. **Web Interface** - User interface and basic dashboard
+6. **Enhanced Dashboard** - Interactive charts and exports
+7. **Profile Management** - Persistence and company management
+8. **Advanced NLP** - Trends, enrichment, competitive analysis
+9. **Security** - Authentication, authorization, and data protection
+10. **Production** - Monitoring, metrics, and deployment readiness
 
-The plan follows a logical progression from foundation (configuration and basic web interface) through core functionality (data collection and NLP) to advanced features (dashboards, exports, monitoring) and finally production readiness (deployment, testing, documentation).
+Each step includes comprehensive validation through:
+- Working code demonstrations
+- Complete test coverage
+- Detailed documentation
+- Clear integration points
 
-Each prompt is designed to be comprehensive enough for an LLM to implement effectively while maintaining focus on specific, achievable objectives.
+The plan ensures incremental progress, early testing, and no orphaned code, with each step building naturally toward the final system described in the specification.
 
 <function_calls>
 <invoke name="TodoWrite">
-<parameter name="todos">[{"content": "Analyze spec.md requirements for project architecture", "status": "completed", "activeForm": "Analyzing spec.md requirements for project architecture"}, {"content": "Create high-level project blueprint", "status": "completed", "activeForm": "Creating high-level project blueprint"}, {"content": "Break down into iterative development chunks", "status": "completed", "activeForm": "Breaking down into iterative development chunks"}, {"content": "Refine chunks into right-sized implementation steps", "status": "completed", "activeForm": "Refining chunks into right-sized implementation steps"}, {"content": "Create detailed prompt plan with code generation instructions", "status": "completed", "activeForm": "Creating detailed prompt plan with code generation instructions"}]
+<parameter name="todos">[{"content": "Analyze spec.md requirements and identify core components", "status": "completed", "activeForm": "Analyzing spec.md requirements and identifying core components"}, {"content": "Draft high-level project blueprint with major phases", "status": "completed", "activeForm": "Drafting high-level project blueprint with major phases"}, {"content": "Break down phases into iterative development chunks", "status": "completed", "activeForm": "Breaking down phases into iterative development chunks"}, {"content": "Refine chunks into implementable steps with validation requirements", "status": "completed", "activeForm": "Refining chunks into implementable steps with validation requirements"}, {"content": "Create LLM prompts for each step with demo and documentation requirements", "status": "completed", "activeForm": "Creating LLM prompts for each step with demo and documentation requirements"}, {"content": "Write prompt_plan.md with complete implementation roadmap", "status": "completed", "activeForm": "Writing prompt_plan.md with complete implementation roadmap"}]
