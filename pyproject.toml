@@ -1,0 +1,56 @@
+[tool.poetry]
+name = "linkedin-company-analysis-tool"
+version = "0.1.0"
+description = "A web-based demo application that analyzes LinkedIn posts for any user-specified company, showcasing AI Ops and NLP capabilities"
+authors = ["LinkedIn Analysis Team <team@example.com>"]
+readme = "README.md"
+packages = [{include = "linkedin_analyzer", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.104.1"
+uvicorn = {extras = ["standard"], version = "^0.24.0"}
+python-dotenv = "^1.0.0"
+requests = "^2.32.5"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-asyncio = "^0.21.1"
+httpx = "^0.25.2"
+
+[tool.poetry.group.lint.dependencies]
+black = "^23.0.0"
+isort = "^5.12.0"
+flake8 = "^6.0.0"
+mypy = "^1.5.0"
+
+[tool.poetry.scripts]
+start = "linkedin_analyzer.main:start"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --strict-markers"
+asyncio_mode = "auto"
