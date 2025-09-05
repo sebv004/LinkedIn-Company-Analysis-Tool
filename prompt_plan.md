@@ -80,7 +80,7 @@ Each step includes:
 ## Acceptance Criteria
 1. step implementation is complete and functional
 2. Documentation is comprehensive and follows established patterns
-3. Demo successfully demonstrates all step features
+3. Demo successfully demonstrates all step features with zero warnings or errors
 4. Test suite passes with zero warnings or errors
 5. Demo executes without warnings or errors
 6. `todo.md` reflects current project state

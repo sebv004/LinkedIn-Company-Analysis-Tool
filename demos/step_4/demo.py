@@ -17,9 +17,10 @@ sys.path.insert(0, str(src_path))
 
 try:
     from linkedin_analyzer.models.company import CompanyConfiguration, CompanyProfile, AnalysisSettings
-    from linkedin_analyzer.models.linkedin_data import LinkedInPost
+    from linkedin_analyzer.models.linkedin_data import LinkedInPost, LinkedInProfile, EngagementMetrics, PostType, ContentSource
     from linkedin_analyzer.storage.memory_storage import CompanyConfigStorage
     from linkedin_analyzer.services.collection_service import LinkedInCollectionService
+    from linkedin_analyzer.services.data_collector import MockDataCollector
     from linkedin_analyzer.services.analysis_service import AnalysisService
     from linkedin_analyzer.nlp.processing_pipeline import PipelineConfig
     from linkedin_analyzer.nlp.sentiment_analyzer import SentimentAnalyzer, SentimentMethod
@@ -206,43 +207,81 @@ def demo_processing_pipeline():
             print(f"   {component}_methods: {available}")
     print()
     
-    # Create sample LinkedIn posts
+    # Create sample LinkedIn posts with proper schema
     sample_posts = [
         LinkedInPost(
-            id="post_1",
-            author="Alice Chen",
+            post_id="post_1",
+            author=LinkedInProfile(
+                profile_id="alice-chen-123",
+                name="Alice Chen",
+                headline="AI Product Manager at TechCorp",
+                company="TechCorp",
+                position="AI Product Manager",
+                location="San Francisco, CA",
+                is_company_employee=True
+            ),
             content="Excited to announce our new AI product launch! This innovative solution will revolutionize data analytics for enterprises. #AI #innovation #technology",
-            timestamp=datetime.now(),
-            engagement_metrics={"likes": 125, "comments": 23, "shares": 15},
-            post_type="announcement",
-            company_mention="TechCorp"
+            published_at=datetime.now(),
+            engagement=EngagementMetrics(likes=125, comments=23, shares=15),
+            post_type=PostType.POST,
+            source=ContentSource.EMPLOYEE_POST,
+            company_mentioned=True,
+            hashtags=["#AI", "#innovation", "#technology"]
         ),
         LinkedInPost(
-            id="post_2", 
-            author="Bob Martinez",
+            post_id="post_2", 
+            author=LinkedInProfile(
+                profile_id="bob-martinez-456",
+                name="Bob Martinez",
+                headline="Senior Developer at TechCorp",
+                company="TechCorp",
+                position="Senior Developer",
+                location="New York, NY",
+                is_company_employee=True
+            ),
             content="Unfortunately disappointed with recent company changes. The new policies are affecting team morale and productivity. We need better communication from leadership.",
-            timestamp=datetime.now(),
-            engagement_metrics={"likes": 45, "comments": 67, "shares": 8},
-            post_type="opinion",
-            company_mention="TechCorp"
+            published_at=datetime.now(),
+            engagement=EngagementMetrics(likes=45, comments=67, shares=8),
+            post_type=PostType.POST,
+            source=ContentSource.EMPLOYEE_POST,
+            company_mentioned=True
         ),
         LinkedInPost(
-            id="post_3",
-            author="Carol Davis",
+            post_id="post_3",
+            author=LinkedInProfile(
+                profile_id="carol-davis-789",
+                name="Carol Davis",
+                headline="CFO at TechCorp",
+                company="TechCorp",
+                position="Chief Financial Officer",
+                location="Boston, MA",
+                is_company_employee=True
+            ),
             content="Quarterly results show steady growth. Revenue increased 12% to $150 million. Our data science team contributed significantly to business intelligence improvements.",
-            timestamp=datetime.now(),
-            engagement_metrics={"likes": 89, "comments": 12, "shares": 22},
-            post_type="business_update",
-            company_mention="TechCorp"
+            published_at=datetime.now(),
+            engagement=EngagementMetrics(likes=89, comments=12, shares=22),
+            post_type=PostType.POST,
+            source=ContentSource.COMPANY_PAGE,
+            company_mentioned=True
         ),
         LinkedInPost(
-            id="post_4",
-            author="David Kim",
+            post_id="post_4",
+            author=LinkedInProfile(
+                profile_id="david-kim-101",
+                name="David Kim",
+                headline="Software Engineer at StartupCo",
+                company="StartupCo",
+                position="Software Engineer",
+                location="Austin, TX",
+                is_company_employee=False
+            ),
             content="Great networking event last night! Met amazing professionals from Microsoft, Google, and Amazon. The future of machine learning looks bright. #networking #ML",
-            timestamp=datetime.now(),
-            engagement_metrics={"likes": 78, "comments": 19, "shares": 11},
-            post_type="networking",
-            company_mention="TechCorp"
+            published_at=datetime.now(),
+            engagement=EngagementMetrics(likes=78, comments=19, shares=11),
+            post_type=PostType.POST,
+            source=ContentSource.COMPANY_MENTION,
+            company_mentioned=False,
+            hashtags=["#networking", "#ML"]
         ),
     ]
     
@@ -313,13 +352,14 @@ def demo_analysis_service():
     
     # Initialize services
     storage = CompanyConfigStorage()
-    collection_service = LinkedInCollectionService(storage)
+    mock_collector = MockDataCollector()
+    collection_service = LinkedInCollectionService(collector=mock_collector)
     analysis_service = AnalysisService(collection_service, storage)
     
     # Create company configuration
     company_profile = CompanyProfile(
         name="DemoTech Corp",
-        linkedin_url="https://linkedin.com/company/demotech",
+        linkedin_url="https://www.linkedin.com/company/demotech",
         aliases=["DemoTech", "Demo Technology"],
         email_domain="demotech.com",
         hashtags=["#demotech", "#innovation"],
@@ -337,13 +377,13 @@ def demo_analysis_service():
     )
     
     company_config = CompanyConfiguration(
-        company=company_profile,
-        analysis_settings=analysis_settings
+        profile=company_profile,
+        settings=analysis_settings
     )
     
     # Store company configuration
-    stored_config = storage.create_company_config(company_config)
-    print(f"✅ Company configuration created: {stored_config.company.name}")
+    stored_config = storage.create(company_config)
+    print(f"✅ Company configuration created: {stored_config.profile.name}")
     print()
     
     # Analyze company posts

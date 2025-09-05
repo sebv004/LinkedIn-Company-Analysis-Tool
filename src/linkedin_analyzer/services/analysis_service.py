@@ -123,7 +123,7 @@ class AnalysisService:
             job.started_at = datetime.now()
             
             # Get company configuration
-            company_config = self.storage.get_company_config(company_name)
+            company_config = self.storage.get(company_name)
             if not company_config:
                 raise ValueError(f"Company configuration not found: {company_name}")
             
@@ -357,7 +357,9 @@ class AnalysisService:
         }
         
         # Create date range string
-        date_range = posts_metadata.metadata.get("date_range", "Unknown date range")
+        start_date = posts_metadata.metadata.date_range_start.strftime("%Y-%m-%d")
+        end_date = posts_metadata.metadata.date_range_end.strftime("%Y-%m-%d")
+        date_range = f"{start_date} to {end_date}"
         
         return CompanyAnalysisSummary(
             company_name=company_name,
@@ -366,7 +368,7 @@ class AnalysisService:
             avg_sentiment_score=avg_sentiment,
             sentiment_distribution=sentiment_distribution,
             sentiment_trend=sentiment_trend,
-            top_topics=unique_key_entities[:10] if unique_key_entities else [],  # Fix: should be top_topics
+            top_topics=top_topics[:10] if top_topics else [],
             topic_diversity=topic_diversity,
             key_entities=unique_key_entities,
             entity_types_count=entity_types_count,
