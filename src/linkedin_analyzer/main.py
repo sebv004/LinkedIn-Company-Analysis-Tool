@@ -12,6 +12,10 @@ from pydantic import ValidationError
 from . import __version__
 from .api.company_config import router as company_router
 from .api.data_collection import router as data_router
+from .api.analysis import router as analysis_router, set_analysis_service
+from .services.analysis_service import AnalysisService
+from .services.collection_service import LinkedInCollectionService
+from .storage.memory_storage import CompanyConfigStorage
 
 # Create FastAPI application instance
 app = FastAPI(
@@ -31,9 +35,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Initialize services
+storage = CompanyConfigStorage()
+collection_service = LinkedInCollectionService(storage)
+analysis_service = AnalysisService(collection_service, storage)
+
+# Set analysis service for dependency injection
+set_analysis_service(analysis_service)
+
 # Include API routers
 app.include_router(company_router)
 app.include_router(data_router)
+app.include_router(analysis_router)
 
 
 @app.exception_handler(ValidationError)
@@ -105,6 +118,7 @@ async def root() -> Dict[str, str]:
         "health": "/health",
         "company_api": "/companies",
         "data_collection_api": "/data",
+        "analysis_api": "/analysis",
     }
 
 
