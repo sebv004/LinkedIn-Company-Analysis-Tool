@@ -42,6 +42,7 @@ Each step includes:
 - Ensure demo showcases all key features of step
 - Include clear instructions for running the demo
 - Demo must integrate seamlessly with existing demo infrastructure
+- Ensure the environment is clean so the demo runs from a fresh state with no cached data
 
 ### 3. Testing Requirements (MUST)
 - Write comprehensive tests for all step functionality

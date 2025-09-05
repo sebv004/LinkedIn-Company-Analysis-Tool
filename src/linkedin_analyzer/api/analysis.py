@@ -450,22 +450,3 @@ async def get_service_status(
             detail=f"Failed to get service status: {str(e)}"
         )
 
-
-# Error handlers
-@router.exception_handler(ValueError)
-async def value_error_handler(request, exc):
-    """Handle validation errors."""
-    return JSONResponse(
-        status_code=400,
-        content={"detail": f"Validation error: {str(exc)}"}
-    )
-
-
-@router.exception_handler(Exception)
-async def general_exception_handler(request, exc):
-    """Handle unexpected errors."""
-    logger.error(f"Unexpected error in analysis API: {exc}")
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "Internal server error occurred"}
-    )

@@ -19,16 +19,33 @@ import requests
 from requests.exceptions import ConnectionError
 
 
+def check_existing_server():
+    """Check if server is already running on port 8001."""
+    try:
+        response = requests.get("http://localhost:8001/health", timeout=2)
+        if response.status_code == 200:
+            print("✅ Found existing server on port 8001!")
+            return True
+    except requests.exceptions.RequestException:
+        pass
+    return False
+
+
 def start_server():
-    """Start the FastAPI server in a subprocess."""
+    """Start the FastAPI server in a subprocess if not already running."""
+    # First check if server is already running on port 8001
+    if check_existing_server():
+        print("🔄 Using existing server on port 8001")
+        return None  # No process started
+    
     project_root = Path(__file__).parent.parent.parent
     
-    print("🚀 Starting FastAPI server with Poetry...")
+    print("🚀 Starting FastAPI server with Poetry on port 8001...")
     cmd = [
         "poetry", "run", "uvicorn",
         "src.linkedin_analyzer.main:app",
         "--host", "0.0.0.0",
-        "--port", "8000",
+        "--port", "8001",
         "--reload"
     ]
     
@@ -45,11 +62,11 @@ def start_server():
 
 def wait_for_server(max_retries=30, delay=1):
     """Wait for server to start up."""
-    print("⏳ Waiting for server to start...")
+    print("⏳ Waiting for server to be ready...")
     
     for attempt in range(max_retries):
         try:
-            response = requests.get("http://localhost:8000/health", timeout=2)
+            response = requests.get("http://localhost:8001/health", timeout=2)
             if response.status_code == 200:
                 print("✅ Server is ready!")
                 return True
@@ -63,13 +80,39 @@ def wait_for_server(max_retries=30, delay=1):
     return False
 
 
+def cleanup_demo_data(base_url):
+    """Clean up any existing demo data to ensure a fresh start."""
+    print("🧹 Cleaning up existing demo data...")
+    
+    try:
+        # Get all companies
+        response = requests.get(f"{base_url}/companies/")
+        if response.status_code == 200:
+            companies = response.json()
+            for company in companies:
+                company_name = company['profile']['name']
+                print(f"   🗑️  Deleting existing company: {company_name}")
+                delete_response = requests.delete(f"{base_url}/companies/{company_name}")
+                if delete_response.status_code == 200:
+                    print(f"   ✅ Deleted: {company_name}")
+                else:
+                    print(f"   ⚠️  Failed to delete: {company_name}")
+        
+        print("✅ Demo data cleanup completed")
+    except Exception as e:
+        print(f"⚠️  Cleanup failed (continuing anyway): {e}")
+
+
 def demo_company_configuration_api():
     """Demonstrate the company configuration API functionality."""
-    base_url = "http://localhost:8000"
+    base_url = "http://localhost:8001"
     
     print("\\n" + "="*60)
     print("COMPANY CONFIGURATION API DEMO")
     print("="*60)
+    
+    # Clean up any existing data first
+    cleanup_demo_data(base_url)
     
     # Test 1: Create a valid company configuration
     print("\\n🏢 1. Creating a valid company configuration...")
@@ -352,21 +395,24 @@ def main():
             return 1
         
         print("\\n🎉 Demo completed successfully!")
-        print("\\nPress Ctrl+C to stop the server...")
         
-        # Keep the server running until user interrupts
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            print("\\n⏹️  Shutting down server...")
+        # Only wait for interrupt if we started our own server
+        if server_process:
+            print("\\nPress Ctrl+C to stop the server...")
+            try:
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                print("\\n⏹️  Shutting down server...")
+        else:
+            print("\\n🔄 Demo used existing server - no shutdown needed")
     
     except Exception as e:
         print(f"❌ Demo failed: {e}")
         return 1
     
     finally:
-        # Clean up server process
+        # Clean up server process (only if we started one)
         if server_process:
             server_process.terminate()
             try:
@@ -374,6 +420,8 @@ def main():
             except subprocess.TimeoutExpired:
                 server_process.kill()
             print("🛑 Server stopped")
+        else:
+            print("🔄 Left existing server running")
     
     return 0
 
