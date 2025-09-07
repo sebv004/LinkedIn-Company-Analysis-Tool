@@ -4,16 +4,6 @@
 
 This document provides a detailed, step-by-step implementation plan for building the LinkedIn Company Analysis Tool - a web-based application that analyzes LinkedIn posts for user-specified companies, showcasing AI Ops and NLP capabilities. The implementation strategy must be followed during all the implementation.
 
-## Implementation Strategy
-- Follow industry best pratices to implement the step
-- Use poetry as modern depencies management system
-- Use .gitignore
-- Each step includes:
-  - **Code-based demo** in `demos/step_[number]/`
-  - **Implementation documentation** in `docs/step_[number]/implementation_doc.md`
-  - **Test documentation** in `docs/step_[number]/test_doc.md`
-  - **Demo instructions** in `docs/step_[number]/demo_doc.md`
-
 ## High-Level Architecture
 
 The system follows a **processing pipeline architecture** with these core phases:
@@ -25,10 +15,14 @@ The system follows a **processing pipeline architecture** with these core phases
 5. **Export & Monitoring** - Report generation and system observability
 6. **Integration & Production** - Authentication, deployment, and optimization
 
-## Requirements
+## Implementation Strategy (MUST)
+
+- Follow industry best pratices to implement the step
+- Use poetry as modern depencies management system
+- Use .gitignore
 
 ### 1. Documentation (MUST)
-- Create comprehensive documentation for step functionality
+- **Implementation documentation** in `docs/step_[number]/implementation_doc.md`
 - Follow the same documentation structure and format used in previous steps
 - Include:
   - Overview of step purpose and functionality
@@ -38,6 +32,7 @@ The system follows a **processing pipeline architecture** with these core phases
   - Integration points with previous steps
 
 ### 2. Demo Implementation (MUST)
+- **Code-based demo** in `demos/step_[number]/`
 - Create a working demo that demonstrates step functionality
 - Follow the same demo structure and patterns used in previous steps
 - Ensure demo showcases all key features of step
@@ -46,6 +41,7 @@ The system follows a **processing pipeline architecture** with these core phases
 - Ensure the environment is clean so the demo runs from a fresh state with no cached data
 
 ### 3. Testing Requirements (MUST)
+- **Test documentation** in `docs/step_[number]/test_doc.md`
 - Write comprehensive tests for all step functionality
 - Follow existing testing patterns and conventions
 - Ensure ALL tests pass without warnings or errors
@@ -53,7 +49,7 @@ The system follows a **processing pipeline architecture** with these core phases
   - Unit tests for core functionality
   - Integration tests with previous steps
   - End-to-end tests for demo scenarios
-- Run full test suite and verify zero warnings/errors
+- Tests run run without any error and warning
 
 ### 4. Demo Execution (MUST)
 - Demo must run without any warnings or errors
@@ -61,6 +57,7 @@ The system follows a **processing pipeline architecture** with these core phases
 - Test all interactive elements work properly
 - Ensure proper error handling and user feedback
 - Validate performance meets expectations
+- Demo runs without any error and warning
 
 ### 5. Documentation Updates (MUST)
 - Update `todo.md` to mark step as completed
